@@ -70,6 +70,8 @@ const coreSkills = [
     { name: 'Gambling', attr: 'Smarts' }
 ];
 
+const LOCALSTORAGE_KEY = "savageWorldsCharacter"
+
 // Character Data
 let characterData = {
     edges: [],
@@ -517,11 +519,11 @@ function saveCharacter() {
         gear: document.getElementById('gear').value,
         notes: document.getElementById('notes').value
     };
-    localStorage.setItem('savageWorldsCharacter', JSON.stringify(data));
+    localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
 }
 
 function loadCharacter() {
-    const saved = localStorage.getItem('savageWorldsCharacter');
+    const saved = localStorage.getItem(LOCALSTORAGE_KEY);
     if (!saved) return;
 
     const data = JSON.parse(saved);
