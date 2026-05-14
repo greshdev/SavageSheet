@@ -27,7 +27,8 @@ body {
 }
 
 .container {
-    max-width: 70%;
+    min-width: 70%;
+    max-width: 100%;
     margin: 0 auto;
     background-color: var(--parchment-light);
     border-radius: 4px;
@@ -94,7 +95,7 @@ body {
 
 .sheet-top-row {
     display: grid;
-    grid-template-columns: 300px 1fr;
+    grid-template-columns: 18.75rem 1fr;
     gap: 1.5rem;
     align-items: start;
     margin-bottom: 0;
@@ -282,12 +283,12 @@ body {
     flex-wrap: wrap;
     gap: 0.75rem;
     margin-top: 0.75rem;
-    min-height: 50px;
+    min-height: 3rem;
 }
 
 .benny {
-    width: 44px;
-    height: 44px;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
     border: 3px solid var(--ink);
@@ -319,8 +320,8 @@ body {
 
 .add-benny-btn,
 .reset-benny-btn {
-    width: 44px;
-    height: 44px;
+    width: 2.75rem;
+    height: 2.75rem;
     border-radius: 50%;
     background: none;
     border: 3px solid var(--gold-dark);
@@ -355,7 +356,7 @@ body {
 
 .sheet-middle-row {
     display: grid;
-    grid-template-columns: 300px 1fr 1fr;
+    grid-template-columns: 18.75rem 1fr 1fr;
     gap: 1.5rem;
     align-items: start;
     margin-top: 1.5rem;
@@ -423,7 +424,7 @@ body {
 .col-gear {
     display: flex;
     flex-direction: column;
-    height: 600px;
+    height: 37.5rem;
 }
 
 /* Slots container (Hindrances + Edges) */
@@ -559,7 +560,7 @@ body {
 
 .skill-die {
     appearance: none;
-    width: 55px;
+    width: 3.5rem;
     padding: 0.25rem;
     font-family: 'Cinzel', serif;
     font-size: 0.85rem;
@@ -578,8 +579,8 @@ body {
 }
 
 .roll-skill-btn {
-    width: 28px;
-    height: 28px;
+    width: 1.75rem;
+    height: 1.75rem;
     border: 1px solid var(--gold-dark);
     border-radius: 3px;
     background: var(--parchment);
@@ -609,7 +610,7 @@ body {
 
 .col-gear .gear-textarea {
     flex: 1;
-    min-height: 400px;
+    min-height: 25rem;
 }
 
 /* Gear list */
@@ -686,7 +687,7 @@ body {
 }
 
 .gear-weight-input {
-    width: 48px;
+    width: 3rem;
     background: transparent;
     border: none;
     border-bottom: 1px solid var(--gold-dark);
@@ -727,7 +728,7 @@ body {
 }
 
 .gear-add-row input[type="number"] {
-    width: 55px;
+    width: 3.5rem;
     padding: 0.35rem 0.4rem;
     font-family: 'Crimson Text', serif;
     font-size: 0.9rem;
@@ -767,8 +768,7 @@ body {
 }
 
 .tracker-inner {
-    width: fit-content;
-    margin: 0 auto;
+    width: 100%;
 }
 
 .shaken-row {
@@ -861,13 +861,15 @@ body {
 
 .tracker-strip {
     display: flex;
-    gap: 0.8rem;
+    gap: min(0.8rem, 2%);
+    justify-content: center;
 }
 
 /* Tracker boxes */
 .tracker-box {
-    width: 44px;
-    height: 44px;
+    flex: 0 1 2.75rem;
+    aspect-ratio: 1;
+    min-width: 0;
     border: 2px solid var(--blood-red);
     border-radius: 4px;
     background: var(--parchment);
@@ -892,8 +894,7 @@ body {
 }
 
 .tracker-box.incapacitated {
-    width: 48px;
-    height: 48px;
+    flex-basis: 3rem;
     border-style: double;
     border-width: 4px;
     font-size: 1.1rem;
@@ -924,7 +925,7 @@ body {
 
 .die-select {
     appearance: none;
-    width: 60px;
+    width: 3.75rem;
     padding: 0.4rem;
     font-family: 'Cinzel', serif;
     font-size: 1rem;
@@ -949,8 +950,8 @@ body {
 }
 
 .roll-trait-btn {
-    width: 39px;
-    height: 39px;
+    width: 2.5rem;
+    height: 2.5rem;
     border: 2px solid var(--gold-dark);
     border-radius: 4px;
     background: var(--parchment);
@@ -1060,20 +1061,20 @@ body {
 
 /* Powers column widths */
 .powers-table :is(th, td) {
-    &:nth-child(2) { width: 50px; }
-    &:nth-child(3) { width: 80px; }
-    &:nth-child(4) { width: 70px; }
-    &:nth-child(6) { width: 30px; }
+    &:nth-child(2) { width: 3.125rem; }
+    &:nth-child(3) { width: 5rem; }
+    &:nth-child(4) { width: 4.375rem; }
+    &:nth-child(6) { width: 1.875rem; }
 }
 
 /* Weapons column widths + alignment */
 .weapons-table :is(th, td) {
-    &:nth-child(1)  { width: 28px; }
-    &:nth-child(3)  { width: 80px; }
-    &:nth-child(4)  { width: 70px; text-align: center; }
+    &:nth-child(1)  { width: 1.75rem; }
+    &:nth-child(3)  { width: 5rem; }
+    &:nth-child(4)  { width: 4.375rem; text-align: center; }
     &:nth-child(5)  { text-align: center; }
-    &:nth-child(6), &:nth-child(7), &:nth-child(8) { width: 45px; text-align: center; }
-    &:nth-child(10) { width: 30px; }
+    &:nth-child(6), &:nth-child(7), &:nth-child(8) { width: 2.75rem; text-align: center; }
+    &:nth-child(10) { width: 1.875rem; }
 }
 
 .weapon-skill-select {
@@ -1095,8 +1096,8 @@ body {
 }
 
 .weapon-attack-btn {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     font-size: 0.85rem;
 }
 
@@ -1126,20 +1127,20 @@ body {
 }
 
 /* Powers form input widths */
-#newPowerName     { flex: 2; min-width: 110px; }
-#newPowerPP       { flex: 0 0 55px; }
-#newPowerRange    { flex: 0 0 75px; }
-#newPowerDuration { flex: 0 0 75px; }
-#newPowerEffect   { flex: 3; min-width: 140px; }
+#newPowerName     { flex: 2; min-width: 6.875rem; }
+#newPowerPP       { flex: 0 0 3.5rem; }
+#newPowerRange    { flex: 0 0 4.75rem; }
+#newPowerDuration { flex: 0 0 4.75rem; }
+#newPowerEffect   { flex: 3; min-width: 8.75rem; }
 
 /* Weapons form input widths */
-#newWeaponName    { flex: 2; min-width: 110px; }
-#newWeaponRange   { flex: 0 0 65px; }
-#newWeaponDamage  { flex: 1; min-width: 75px; }
-#newWeaponAP      { flex: 0 0 45px; }
-#newWeaponRoF     { flex: 0 0 45px; }
-#newWeaponWt      { flex: 0 0 45px; }
-#newWeaponNotes   { flex: 3; min-width: 110px; }
+#newWeaponName    { flex: 2; min-width: 6.875rem; }
+#newWeaponRange   { flex: 0 0 4rem; }
+#newWeaponDamage  { flex: 1; min-width: 4.75rem; }
+#newWeaponAP      { flex: 0 0 2.75rem; }
+#newWeaponRoF     { flex: 0 0 2.75rem; }
+#newWeaponWt      { flex: 0 0 2.75rem; }
+#newWeaponNotes   { flex: 3; min-width: 6.875rem; }
 
 /* ── POWER POINTS TRACKER ─────────────────────────────────────── */
 
@@ -1163,7 +1164,7 @@ body {
 }
 
 .power-points-input {
-    width: 50px;
+    width: 3rem;
     padding: 0.4rem;
     font-family: 'Cinzel', serif;
     font-size: 1.2rem;
@@ -1184,7 +1185,7 @@ body {
 
 .gear-textarea {
     width: 100%;
-    min-height: 120px;
+    min-height: 7.5rem;
     padding: 1rem;
     font-family: 'Crimson Text', serif;
     font-size: 1rem;
@@ -1252,9 +1253,9 @@ body {
 .sidebar {
     position: fixed;
     top: 0;
-    left: -320px;
+    left: -20rem;
     bottom: 0;
-    width: 280px;
+    width: 17.5rem;
     z-index: 99;
     background: var(--ink);
     color: var(--parchment);
@@ -1338,8 +1339,8 @@ body {
 }
 
 .color-picker {
-    width: 48px;
-    height: 28px;
+    width: 3rem;
+    height: 1.75rem;
     border: 2px solid var(--gold-dark);
     border-radius: 4px;
     cursor: pointer;
@@ -1361,7 +1362,7 @@ body {
     border-radius: 3px;
     cursor: pointer;
     transition: all 0.2s ease;
-    min-width: 140px;
+    min-width: 8.75rem;
 }
 
 .import-export-btn:hover {
@@ -1380,7 +1381,7 @@ body {
     text-align: center;
     opacity: 0;
     transition: opacity 0.3s ease;
-    max-width: 200px;
+    max-width: 12.5rem;
     z-index: 1;
 }
 
@@ -1412,7 +1413,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    min-width: 200px;
+    min-width: 12.5rem;
 }
 
 .roll-history {
@@ -1489,7 +1490,7 @@ body {
     color: var(--gold-dark);
     text-align: center;
     display: none;
-    max-width: 220px;
+    max-width: 13.75rem;
     word-wrap: break-word;
 }
 
@@ -1565,7 +1566,7 @@ body {
     width: 90%;
     height: 100%;
     position: fixed;
-    top: 0px;
+    top: 0;
     left: 5%;
     z-index: 2;
     pointer-events: none;
