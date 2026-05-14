@@ -73,6 +73,20 @@ const coreSkills = [
 ];
 
 const LOCALSTORAGE_KEY = "savageWorldsCharacter"
+const DICE_CONFIG_KEY = "savageDiceConfig"
+
+let diceConfig = { standardColor: '#ffffff', wildColor: '#7f0e0e' };
+
+function loadDiceConfig() {
+    const saved = localStorage.getItem(DICE_CONFIG_KEY);
+    if (saved) diceConfig = { ...diceConfig, ...JSON.parse(saved) };
+    document.getElementById('standardDiceColor').value = diceConfig.standardColor;
+    document.getElementById('wildDiceColor').value = diceConfig.wildColor;
+}
+
+function saveDiceConfig() {
+    localStorage.setItem(DICE_CONFIG_KEY, JSON.stringify(diceConfig));
+}
 
 const HINDRANCE_SLOT_COUNT = 4;
 const EDGE_SLOT_LABELS = [
@@ -588,6 +602,7 @@ function updateBenniesDisplay() {
 
 // Roll a single die with exploding
 async function rollExplodingDie(sides, options) {
+    const rollOptions = { themeColor: diceConfig.standardColor, ...options };
     let total = 0;
     let rolls = [];
     let currentRoll;
@@ -596,9 +611,9 @@ async function rollExplodingDie(sides, options) {
     do {
         const result = await diceBox.add(
             {
-                sides: sides, 
+                sides: sides,
                 groupId: groupId,
-            }, options
+            }, rollOptions
         )
         console.log(result)
         groupId = result[0].groupId
@@ -611,9 +626,7 @@ async function rollExplodingDie(sides, options) {
 }
 
 async function rollWildDie() {
-    return await rollExplodingDie(6, {
-        themeColor: "#7f0e0e",
-    })
+    return await rollExplodingDie(6, { themeColor: diceConfig.wildColor });
 }
 
 // Roll a trait (attribute or skill) with Wild Die
@@ -1067,6 +1080,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         element.addEventListener("click", async () => await rollDice())
     })
 
+
+    // Sidebar
+    loadDiceConfig();
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('visible'); }
+    function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('visible'); }
+    document.getElementById('sidebarToggle').addEventListener('click', openSidebar);
+    document.getElementById('sidebarClose').addEventListener('click', closeSidebar);
+    overlay.addEventListener('click', closeSidebar);
+
+    // Dice color pickers
+    document.getElementById('standardDiceColor').addEventListener('input', e => {
+        diceConfig.standardColor = e.target.value;
+        saveDiceConfig();
+    });
+    document.getElementById('wildDiceColor').addEventListener('input', e => {
+        diceConfig.wildColor = e.target.value;
+        saveDiceConfig();
+    });
 
     // Export/Import event listeners
     document.getElementById('exportBtn').addEventListener('click', exportCharacter);

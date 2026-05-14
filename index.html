@@ -303,12 +303,41 @@
         </div>
     </div>
 
-    <!-- Import/Export -->
-    <div class="import-export-section">
-        <button class="import-export-btn" id="importBtn">⬆ Import Character</button>
-        <button class="import-export-btn" id="exportBtn">⬇ Export Character</button>
-        <input type="file" id="importFile" accept=".json" style="display: none">
+    <!-- Sidebar toggle -->
+    <button class="sidebar-toggle" id="sidebarToggle">⚙</button>
+
+    <!-- Sidebar overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="sidebar-title">Settings</span>
+            <button class="sidebar-close" id="sidebarClose">×</button>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4 class="sidebar-section-title">Dice Colors</h4>
+            <div class="color-option">
+                <label class="color-label">Standard</label>
+                <input type="color" id="standardDiceColor" class="color-picker" value="#ffffff">
+            </div>
+            <div class="color-option">
+                <label class="color-label">Wild Die</label>
+                <input type="color" id="wildDiceColor" class="color-picker" value="#7f0e0e">
+            </div>
+        </div>
+        
+        <div class="sidebar-section">
+            <h4 class="sidebar-section-title">Character File</h4>
+            <div class="sidebar-buttons">
+                <button class="import-export-btn" id="importBtn">⬆ Import</button>
+                <button class="import-export-btn" id="exportBtn">⬇ Export</button>
+            </div>
+            <input type="file" id="importFile" accept=".json" style="display: none">
+        </div>
     </div>
+
     <div class="import-export-message" id="importExportMessage"></div>
 
     <!-- Dice Roller -->
