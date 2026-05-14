@@ -109,7 +109,9 @@ let characterData = {
     wounds: 0,
     fatigue: 0,
     incapacitated: false,
-    bennies: 3
+    bennies: 3,
+    currentPP: 0,
+    maxPP: 0
 };
 
 function setSkillOrder(row, value) {
@@ -782,8 +784,6 @@ function gatherCharacterData() {
             vigor: document.getElementById('attr-vigor').value
         },
         pace: document.getElementById('pace').value,
-        currentPP: document.getElementById('currentPP').value,
-        maxPP: document.getElementById('maxPP').value,
         notes: document.getElementById('notes').value
     };
 }
@@ -842,8 +842,10 @@ function loadCharacter() {
     }
 
     if (data.pace) document.getElementById('pace').value = data.pace;
-    if (data.currentPP) document.getElementById('currentPP').value = data.currentPP;
-    if (data.maxPP) document.getElementById('maxPP').value = data.maxPP;
+    characterData.currentPP = parseInt(data.currentPP) || 0;
+    characterData.maxPP = parseInt(data.maxPP) || 0;
+    document.getElementById('currentPP').value = characterData.currentPP;
+    document.getElementById('maxPP').value = characterData.maxPP;
     if (data.notes) document.getElementById('notes').value = data.notes;
 
     // Restore skills
@@ -1032,6 +1034,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     updateEdgeSlotAvailability();
     initTrackers();
     loadCharacter();
+
+    // Keep PP fields in sync with characterData before autoSave runs
+    ['currentPP', 'maxPP'].forEach(id => {
+        document.getElementById(id).addEventListener('change', e => {
+            characterData[id] = parseInt(e.target.value) || 0;
+        });
+    });
+
     initAutoSave();
     updateDerivedStats();
     updateRank();
