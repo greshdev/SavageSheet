@@ -189,97 +189,107 @@
                 </div>
             </div>
 
-            <!-- Center: Hindrances + Edges -->
+            <!-- Center: Hindrances + Edges (slot-based) -->
             <div class="col-right-sidebar">
-                <h3 class="section-header">Hindrances</h3>
-                <div class="list-container">
-                    <ul class="item-list" id="hindrancesList"></ul>
-                    <div class="add-item">
-                        <input type="text" id="newHindrance" placeholder="Add hindrance...">
-                        <button class="add-btn" data-add-item="hindrances">+</button>
-                    </div>
-                </div>
-
-                <h3 class="section-header">Edges</h3>
-                <div class="list-container">
-                    <ul class="item-list" id="edgesList"></ul>
-                    <div class="add-item">
-                        <input type="text" id="newEdge" placeholder="Add edge...">
-                        <button class="add-btn" data-add-item="edges">+</button>
-                    </div>
+                <div class="slots-container">
+                    <h3 class="section-header">Hindrances</h3>
+                    <div id="hindrancesSlots" class="slot-list"></div>
+                    <h3 class="section-header">Edges & Advances</h3>
+                    <div id="edgesSlots" class="slot-list"></div>
                 </div>
             </div>
 
-            <!-- Right: Gear -->
+            <!-- Right: Gear / Weapons tabbed -->
             <div class="col-gear">
-                <h3 class="section-header">Gear & Equipment</h3>
-                <textarea class="gear-textarea" id="gear" placeholder="List your armor, equipment, and money here..."></textarea>
+                <div class="gear-tab-bar">
+                    <button class="gear-tab-btn active" data-gear-tab="gear">Gear</button>
+                    <button class="gear-tab-btn" data-gear-tab="weapons">Weapons</button>
+                    <button class="gear-tab-btn" data-gear-tab="powers">Powers</button>
+                </div>
+
+                <div class="gear-tab-panel" id="gear-tab-gear">
+                    <div class="gear-list-container">
+                        <div class="gear-list-header">
+                            <span>Item</span>
+                            <span>Wt</span>
+                        </div>
+                        <div class="gear-list" id="gearList"></div>
+                        <div class="gear-add-row">
+                            <input type="text" id="newGearName" placeholder="Add item...">
+                            <input type="number" id="newGearWeight" placeholder="0" min="0" step="0.5">
+                            <button class="add-btn" id="addGearBtn">+</button>
+                        </div>
+                        <div class="gear-total">
+                            Total weight: <span id="gearTotal">0</span> lbs
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gear-tab-panel" id="gear-tab-powers" hidden>
+                    <div class="power-points-tracker">
+                        <span class="power-points-label">Power Points:</span>
+                        <input type="number" class="power-points-input" id="currentPP" value="0" min="0">
+                        <span class="power-points-label">/</span>
+                        <input type="number" class="power-points-input" id="maxPP" value="0" min="0">
+                        <span class="power-points-label">Max</span>
+                    </div>
+                    <div class="weapons-scroll">
+                        <table class="sheet-table powers-table">
+                            <thead>
+                                <tr>
+                                    <th>Power</th>
+                                    <th>PP</th>
+                                    <th>Range</th>
+                                    <th>Dur.</th>
+                                    <th>Effect</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="powersTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="add-table-row-form" id="addPowerForm">
+                        <input type="text" id="newPowerName" placeholder="Power name">
+                        <input type="text" id="newPowerPP" placeholder="PP">
+                        <input type="text" id="newPowerRange" placeholder="Range">
+                        <input type="text" id="newPowerDuration" placeholder="Duration">
+                        <input type="text" id="newPowerEffect" placeholder="Effect">
+                        <button class="add-btn" id="addPowerBtn">+</button>
+                    </div>
+                </div>
+
+                <div class="gear-tab-panel" id="gear-tab-weapons" hidden>
+                    <div class="weapons-scroll">
+                        <table class="sheet-table weapons-table">
+                            <thead>
+                                <tr>
+                                    <th>Weapon</th>
+                                    <th>Range</th>
+                                    <th>Damage</th>
+                                    <th>AP</th>
+                                    <th>RoF</th>
+                                    <th>Wt</th>
+                                    <th>Notes</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="weaponsTableBody"></tbody>
+                        </table>
+                    </div>
+                    <div class="add-table-row-form" id="addWeaponForm">
+                        <input type="text" id="newWeaponName" placeholder="Weapon name">
+                        <input type="text" id="newWeaponRange" placeholder="Range">
+                        <input type="text" id="newWeaponDamage" placeholder="Damage">
+                        <input type="text" id="newWeaponAP" placeholder="AP">
+                        <input type="text" id="newWeaponRoF" placeholder="RoF">
+                        <input type="text" id="newWeaponWt" placeholder="Wt">
+                        <input type="text" id="newWeaponNotes" placeholder="Notes">
+                        <button class="add-btn" id="addWeaponBtn">+</button>
+                    </div>
+                </div>
             </div>
 
         </div><!-- end .sheet-middle-row -->
-
-        <!-- Powers Section -->
-        <div class="powers-section">
-            <h3 class="section-header">Powers</h3>
-            <div class="power-points-tracker">
-                <span class="power-points-label">Power Points:</span>
-                <input type="number" class="power-points-input" id="currentPP" value="0" min="0">
-                <span class="power-points-label">/</span>
-                <input type="number" class="power-points-input" id="maxPP" value="0" min="0">
-                <span class="power-points-label">Max</span>
-            </div>
-            <table class="sheet-table powers-table">
-                <thead>
-                    <tr>
-                        <th>Power</th>
-                        <th>PP</th>
-                        <th>Range</th>
-                        <th>Dur.</th>
-                        <th>Effect</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="powersTableBody"></tbody>
-            </table>
-            <div class="add-table-row-form" id="addPowerForm">
-                <input type="text" id="newPowerName" placeholder="Power name">
-                <input type="text" id="newPowerPP" placeholder="PP">
-                <input type="text" id="newPowerRange" placeholder="Range">
-                <input type="text" id="newPowerDuration" placeholder="Duration">
-                <input type="text" id="newPowerEffect" placeholder="Effect">
-                <button class="add-btn" id="addPowerBtn">+</button>
-            </div>
-        </div>
-
-        <!-- Weapons Section -->
-        <div class="weapons-section">
-            <h3 class="section-header">Weapons</h3>
-            <table class="sheet-table weapons-table">
-                <thead>
-                    <tr>
-                        <th>Weapon</th>
-                        <th>Range</th>
-                        <th>Damage</th>
-                        <th>AP</th>
-                        <th>RoF</th>
-                        <th>Wt</th>
-                        <th>Notes</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="weaponsTableBody"></tbody>
-            </table>
-            <div class="add-table-row-form" id="addWeaponForm">
-                <input type="text" id="newWeaponName" placeholder="Weapon name">
-                <input type="text" id="newWeaponRange" placeholder="Range">
-                <input type="text" id="newWeaponDamage" placeholder="Damage">
-                <input type="text" id="newWeaponAP" placeholder="AP">
-                <input type="text" id="newWeaponRoF" placeholder="RoF">
-                <input type="text" id="newWeaponWt" placeholder="Wt">
-                <input type="text" id="newWeaponNotes" placeholder="Notes">
-                <button class="add-btn" id="addWeaponBtn">+</button>
-            </div>
-        </div>
 
         <!-- Notes Section -->
         <div class="notes-section">

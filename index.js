@@ -36,54 +36,71 @@ function releaseRollLock() {
 
 // Core Skills Data
 const coreSkills = [
-    { name: 'Athletics', attr: 'Agility' },
-    { name: 'Boating', attr: 'Agility' },
-    { name: 'Driving', attr: 'Agility' },
-    { name: 'Fighting', attr: 'Agility' },
-    { name: 'Piloting', attr: 'Agility' },
-    { name: 'Riding', attr: 'Agility' },
-    { name: 'Shooting', attr: 'Agility' },
-    { name: 'Stealth', attr: 'Agility' },
-    { name: 'Thievery', attr: 'Agility' },
+    // Core skills (every character has these)
+    { name: 'Athletics', attr: 'Agility', core: true },
+    { name: 'Common Knowledge', attr: 'Smarts', core: true },
+    { name: 'Notice', attr: 'Smarts', core: true },
+    { name: 'Persuasion', attr: 'Spirit', core: true },
+    { name: 'Stealth', attr: 'Agility', core: true },
+    // Other skills
     { name: 'Academics', attr: 'Smarts' },
     { name: 'Battle', attr: 'Smarts' },
-    { name: 'Common Knowledge', attr: 'Smarts' },
+    { name: 'Boating', attr: 'Agility' },
+    { name: 'Driving', attr: 'Agility' },
     { name: 'Electronics', attr: 'Smarts' },
+    { name: 'Faith', attr: 'Spirit' },
+    { name: 'Fighting', attr: 'Agility' },
+    { name: 'Focus', attr: 'Spirit' },
+    { name: 'Gambling', attr: 'Smarts' },
     { name: 'Hacking', attr: 'Smarts' },
     { name: 'Healing', attr: 'Smarts' },
+    { name: 'Intimidation', attr: 'Spirit' },
     { name: 'Language', attr: 'Smarts' },
-    { name: 'Notice', attr: 'Smarts' },
     { name: 'Occult', attr: 'Smarts' },
+    { name: 'Performance', attr: 'Spirit' },
+    { name: 'Piloting', attr: 'Agility' },
+    { name: 'Psionics', attr: 'Smarts' },
     { name: 'Repair', attr: 'Smarts' },
     { name: 'Research', attr: 'Smarts' },
+    { name: 'Riding', attr: 'Agility' },
     { name: 'Science', attr: 'Smarts' },
+    { name: 'Shooting', attr: 'Agility' },
+    { name: 'Spellcasting', attr: 'Smarts' },
     { name: 'Survival', attr: 'Smarts' },
     { name: 'Taunt', attr: 'Smarts' },
-    { name: 'Faith', attr: 'Spirit' },
-    { name: 'Focus', attr: 'Spirit' },
-    { name: 'Intimidation', attr: 'Spirit' },
-    { name: 'Performance', attr: 'Spirit' },
-    { name: 'Persuasion', attr: 'Spirit' },
-    { name: 'Psionics', attr: 'Smarts' },
-    { name: 'Spellcasting', attr: 'Smarts' },
+    { name: 'Thievery', attr: 'Agility' },
     { name: 'Weird Science', attr: 'Smarts' },
-    { name: 'Gambling', attr: 'Smarts' }
 ];
 
 const LOCALSTORAGE_KEY = "savageWorldsCharacter"
 
+const HINDRANCE_SLOT_COUNT = 4;
+const EDGE_SLOT_LABELS = [
+    '', '', '', '', '',          // 5 unlabeled (character creation)
+    'N', 'N', 'N',               // Novice
+    'S', 'S', 'S', 'S',          // Seasoned
+    'V', 'V', 'V', 'V',          // Veteran
+    'H', 'H', 'H', 'H',          // Heroic
+    'L', 'L', 'L', 'L',          // Legendary
+];
+
 // Character Data
 let characterData = {
-    edges: [],
-    hindrances: [],
+    edges: Array(EDGE_SLOT_LABELS.length).fill(''),
+    hindrances: Array(HINDRANCE_SLOT_COUNT).fill(''),
     powers: [],   // { name, pp, range, duration, effect }
     weapons: [],  // { name, range, damage, ap, rof, wt, notes }
+    gear: [],     // { name, weight }
     skills: {},
     wounds: 0,
     fatigue: 0,
     incapacitated: false,
     bennies: 3
 };
+
+function setSkillOrder(row, value) {
+    row.style.order = parseInt(value) > 0 ? 0 : 1;
+}
 
 // Initialize Skills
 function initSkills() {
@@ -92,7 +109,7 @@ function initSkills() {
 
     coreSkills.forEach(skill => {
         const row = document.createElement('div');
-        row.className = 'skill-row';
+        row.className = skill.core ? 'skill-row skill-row--core' : 'skill-row';
         row.innerHTML = `
             <span class="skill-name">
                 ${skill.name}
@@ -111,13 +128,19 @@ function initSkills() {
                 title="Roll ${skill.name}">⚄</button>
         `;
         container.appendChild(row);
+        if (skill.core) {
+            row.querySelector('.skill-die').value = '4';
+        }
+        setSkillOrder(row, row.querySelector('.skill-die').value);
     });
 
     // Add event listeners for skill die changes
     document.querySelectorAll('.skill-die').forEach(select => {
         select.addEventListener('change', (e) => {
             const skillName = e.target.dataset.skill;
-            characterData.skills[skillName] = parseInt(e.target.value);
+            const value = parseInt(e.target.value);
+            characterData.skills[skillName] = value;
+            setSkillOrder(e.target.closest('.skill-row'), value);
             updateDerivedStats();
             saveCharacter();
         });
@@ -168,30 +191,56 @@ function updateDerivedStats() {
     document.getElementById('toughness').textContent = toughness;
 }
 
-// Add edge or hindrance
-function addItem(type) {
-    const inputId = type === 'edges' ? 'newEdge' : 'newHindrance';
-    const input = document.getElementById(inputId);
-    const value = input.value.trim();
-    if (!value) return;
-    characterData[type].push(value);
-    renderSimpleList(type);
-    input.value = '';
-    saveCharacter();
+// Build slot inputs for Hindrances and Edges
+function initSlots() {
+    const hindrancesEl = document.getElementById('hindrancesSlots');
+    for (let i = 0; i < HINDRANCE_SLOT_COUNT; i++) {
+        const row = document.createElement('div');
+        row.className = 'slot-row';
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'slot-input';
+        input.dataset.slotType = 'hindrances';
+        input.dataset.slotIndex = i;
+        input.addEventListener('input', e => {
+            characterData.hindrances[i] = e.target.value;
+            saveCharacter();
+        });
+        row.appendChild(input);
+        hindrancesEl.appendChild(row);
+    }
+
+    const edgesEl = document.getElementById('edgesSlots');
+    EDGE_SLOT_LABELS.forEach((label, i) => {
+        const row = document.createElement('div');
+        row.className = 'slot-row';
+        if (label) {
+            const rankEl = document.createElement('span');
+            rankEl.className = 'slot-rank';
+            rankEl.textContent = label;
+            row.appendChild(rankEl);
+        }
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'slot-input';
+        input.dataset.slotType = 'edges';
+        input.dataset.slotIndex = i;
+        input.addEventListener('input', e => {
+            characterData.edges[i] = e.target.value;
+            saveCharacter();
+        });
+        row.appendChild(input);
+        edgesEl.appendChild(row);
+    });
 }
 
-// Render edges or hindrances list
-function renderSimpleList(type) {
-    const listId = type === 'edges' ? 'edgesList' : 'hindrancesList';
-    const list = document.getElementById(listId);
-    list.innerHTML = '';
-    characterData[type].forEach((item, index) => {
-        const li = document.createElement('li');
-        li.innerHTML = `
-            <span>${item}</span>
-            <button class="remove-btn" data-remove-type="${type}" data-remove-index="${index}">×</button>
-        `;
-        list.appendChild(li);
+// Populate slot inputs from characterData
+function renderSlots() {
+    document.querySelectorAll('[data-slot-type="hindrances"]').forEach(input => {
+        input.value = characterData.hindrances[input.dataset.slotIndex] || '';
+    });
+    document.querySelectorAll('[data-slot-type="edges"]').forEach(input => {
+        input.value = characterData.edges[input.dataset.slotIndex] || '';
     });
 }
 
@@ -245,6 +294,50 @@ function addPower() {
     renderPowersTable();
     ['newPowerName','newPowerPP','newPowerRange','newPowerDuration','newPowerEffect']
         .forEach(id => { document.getElementById(id).value = ''; });
+    saveCharacter();
+}
+
+// Render gear list
+function renderGearList() {
+    const list = document.getElementById('gearList');
+    list.innerHTML = '';
+    characterData.gear.forEach((item, index) => {
+        const row = document.createElement('div');
+        row.className = 'gear-row';
+        row.innerHTML = `
+            <input type="text" class="gear-name-input" value="${item.name}" placeholder="Item..." data-gear-field="name" data-gear-index="${index}">
+            <input type="number" class="gear-weight-input" value="${item.weight}" placeholder="0" min="0" step="0.5" data-gear-field="weight" data-gear-index="${index}">
+            <button class="remove-btn" data-remove-type="gear" data-remove-index="${index}">×</button>
+        `;
+        list.appendChild(row);
+    });
+
+    list.querySelectorAll('[data-gear-field]').forEach(input => {
+        input.addEventListener('input', e => {
+            const i = parseInt(e.target.dataset.gearIndex);
+            characterData.gear[i][e.target.dataset.gearField] = e.target.value;
+            updateGearTotal();
+            saveCharacter();
+        });
+    });
+
+    updateGearTotal();
+}
+
+function updateGearTotal() {
+    const total = characterData.gear.reduce((sum, item) => sum + (parseFloat(item.weight) || 0), 0);
+    document.getElementById('gearTotal').textContent = total % 1 === 0 ? total : total.toFixed(1);
+}
+
+// Add gear item
+function addGear() {
+    const name = document.getElementById('newGearName').value.trim();
+    const weight = document.getElementById('newGearWeight').value;
+    if (!name) return;
+    characterData.gear.push({ name, weight: weight || '' });
+    renderGearList();
+    document.getElementById('newGearName').value = '';
+    document.getElementById('newGearWeight').value = '';
     saveCharacter();
 }
 
@@ -359,12 +452,31 @@ function renderBennies() {
         container.appendChild(benny);
     }
 
+    const bennyActions = document.createElement("div")
+    bennyActions.className = "benny-actions"
+
     const addBennyBtn = document.createElement("button")
     addBennyBtn.className = "add-benny-btn"
     addBennyBtn.textContent = "+"
     addBennyBtn.title = "Click to add benny"
     addBennyBtn.addEventListener("click", addBenny)
-    container.appendChild(addBennyBtn)
+    bennyActions.appendChild(addBennyBtn)
+
+    const resetBtn = document.createElement("button")
+    resetBtn.className = "reset-benny-btn"
+    resetBtn.textContent = "↺"
+    resetBtn.title = "Reset to 3"
+    resetBtn.addEventListener("click", () => {
+        resetBtn.classList.add("resetting")
+        setTimeout(() => {
+            characterData.bennies = 3
+            renderBennies()
+            saveCharacter()
+        }, 600)
+    })
+    bennyActions.appendChild(resetBtn)
+
+    container.appendChild(bennyActions)
 }
 
 // Spend a benny with animation
@@ -567,7 +679,6 @@ function gatherCharacterData() {
         pace: document.getElementById('pace').value,
         currentPP: document.getElementById('currentPP').value,
         maxPP: document.getElementById('maxPP').value,
-        gear: document.getElementById('gear').value,
         notes: document.getElementById('notes').value
     };
 }
@@ -583,15 +694,26 @@ function loadCharacter() {
     if (!saved) return;
 
     const data = JSON.parse(saved);
+    const hindrances = Array(HINDRANCE_SLOT_COUNT).fill('');
+    (data.hindrances || []).slice(0, HINDRANCE_SLOT_COUNT).forEach((v, i) => {
+        hindrances[i] = typeof v === 'string' ? v : '';
+    });
+    const edges = Array(EDGE_SLOT_LABELS.length).fill('');
+    (data.edges || []).slice(0, EDGE_SLOT_LABELS.length).forEach((v, i) => {
+        edges[i] = typeof v === 'string' ? v : '';
+    });
     characterData = {
-        edges: data.edges || [],
-        hindrances: data.hindrances || [],
+        edges,
+        hindrances,
         powers: (data.powers || []).map(p =>
             typeof p === 'string'
                 ? { name: p, pp: '', range: '', duration: '', effect: '' }
                 : p
         ),
         weapons: data.weapons || [],
+        gear: typeof data.gear === 'string'
+            ? data.gear.split('\n').map(s => s.trim()).filter(Boolean).map(name => ({ name, weight: '' }))
+            : (data.gear || []),
         skills: data.skills || {},
         wounds: data.wounds || 0,
         fatigue: data.fatigue || 0,
@@ -617,20 +739,22 @@ function loadCharacter() {
     if (data.pace) document.getElementById('pace').value = data.pace;
     if (data.currentPP) document.getElementById('currentPP').value = data.currentPP;
     if (data.maxPP) document.getElementById('maxPP').value = data.maxPP;
-    if (data.gear) document.getElementById('gear').value = data.gear;
     if (data.notes) document.getElementById('notes').value = data.notes;
 
     // Restore skills
     Object.entries(characterData.skills).forEach(([skill, value]) => {
         const select = document.querySelector(`[data-skill="${skill}"]`);
-        if (select) select.value = value;
+        if (select) {
+            select.value = value;
+            setSkillOrder(select.closest('.skill-row'), value);
+        }
     });
 
     // Update displays
-    renderSimpleList('edges');
-    renderSimpleList('hindrances');
+    renderSlots();
     renderPowersTable();
     renderWeaponsTable();
+    renderGearList();
     updateWoundsFatigueDisplay();
     updateBenniesDisplay();
     updateDerivedStats();
@@ -798,6 +922,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     await diceBox.init()
 
     initSkills();
+    initSlots();
     initTrackers();
     loadCharacter();
     initAutoSave();
@@ -810,15 +935,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         saveCharacter();
     });
 
-    // Enter key handlers for add inputs
-    ['newEdge', 'newHindrance'].forEach(id => {
-        document.getElementById(id).addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                const type = id.replace('new', '').toLowerCase() + 's';
-                addItem(type);
-            }
-        });
-    });
     document.getElementById('newPowerEffect').addEventListener('keypress', e => {
         if (e.key === 'Enter') addPower();
     });
@@ -827,8 +943,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Powers and weapons buttons
+    // Gear / Weapons tab switching
+    document.querySelectorAll('.gear-tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.gear-tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.gear-tab-panel').forEach(p => p.hidden = true);
+            btn.classList.add('active');
+            document.getElementById(`gear-tab-${btn.dataset.gearTab}`).hidden = false;
+        });
+    });
+
     document.getElementById('addPowerBtn').addEventListener('click', addPower);
     document.getElementById('addWeaponBtn').addEventListener('click', addWeapon);
+    document.getElementById('addGearBtn').addEventListener('click', addGear);
+    document.getElementById('newGearName').addEventListener('keypress', e => {
+        if (e.key === 'Enter') addGear();
+    });
 
     // Delegated remove handler for lists and tables
     document.querySelector('.container').addEventListener('click', (e) => {
@@ -839,7 +969,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         characterData[type].splice(index, 1);
         if (type === 'powers') renderPowersTable();
         else if (type === 'weapons') renderWeaponsTable();
-        else renderSimpleList(type);
+        else if (type === 'gear') renderGearList();
         saveCharacter();
     });
 
@@ -856,10 +986,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         element.addEventListener("click", async () => await rollDice())
     })
 
-    document.querySelectorAll("[data-add-item]").forEach(element => {
-        const itemType = element.getAttribute("data-add-item")
-        element.addEventListener("click", () => addItem(itemType))
-    })
 
     // Export/Import event listeners
     document.getElementById('exportBtn').addEventListener('click', exportCharacter);
