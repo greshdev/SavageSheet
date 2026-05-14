@@ -112,7 +112,9 @@ let characterData = {
     bennies: 3,
     currentPP: 0,
     maxPP: 0,
-    shaken: false
+    shaken: false,
+    distracted: false,
+    vulnerable: false
 };
 
 function setSkillOrder(row, value) {
@@ -539,6 +541,18 @@ function initTrackers() {
     // Spirit recovery roll
     document.getElementById('shakenRecoverBtn').addEventListener('click', rollShakenRecovery);
 
+    // Distracted / Vulnerable toggles
+    document.getElementById('distractedToggle').addEventListener('click', () => {
+        characterData.distracted = !characterData.distracted;
+        updateStatusDisplay();
+        saveCharacter();
+    });
+    document.getElementById('vulnerableToggle').addEventListener('click', () => {
+        characterData.vulnerable = !characterData.vulnerable;
+        updateStatusDisplay();
+        saveCharacter();
+    });
+
     // Initialize bennies display
     renderBennies();
 }
@@ -564,12 +578,20 @@ function updateWoundsFatigueDisplay() {
     const atThreshold = (characterData.wounds >= 3 || characterData.fatigue >= 2) && !characterData.incapacitated;
     incapBox.classList.toggle('available', atThreshold);
 
-    updateShakenDisplay();
+    updateStatusDisplay();
 }
 
 function updateShakenDisplay() {
     const btn = document.getElementById('shakenToggle');
     if (btn) btn.classList.toggle('shaken-active', characterData.shaken);
+}
+
+function updateStatusDisplay() {
+    updateShakenDisplay();
+    const d = document.getElementById('distractedToggle');
+    const v = document.getElementById('vulnerableToggle');
+    if (d) d.classList.toggle('status-toggle-active', characterData.distracted);
+    if (v) v.classList.toggle('status-toggle-active', characterData.vulnerable);
 }
 
 async function rollShakenRecovery() {
@@ -578,7 +600,7 @@ async function rollShakenRecovery() {
     diceBox.clear();
 
     const die = parseInt(document.getElementById('attr-spirit').value);
-    const penalty = characterData.wounds + characterData.fatigue;
+    const penalty = characterData.wounds + characterData.fatigue + (characterData.distracted ? 2 : 0);
     const modifier = getRollModifier();
 
     const traitRollPromise = rollExplodingDie(die);
@@ -594,7 +616,7 @@ async function rollShakenRecovery() {
 
     let details = `d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
-    if (penalty > 0) details += ` | -${penalty} penalty`;
+    if (penalty > 0) details += ` | -${penalty} penalty${characterData.distracted ? ' (distracted)' : ''}`;
     if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier} mod`;
 
     if (bestTotal >= 4) {
@@ -727,7 +749,7 @@ async function rollTrait(selectId, traitName) {
     }
 
     // Calculate wound/fatigue penalty
-    const penalty = characterData.wounds + characterData.fatigue;
+    const penalty = characterData.wounds + characterData.fatigue + (characterData.distracted ? 2 : 0);
 
     // Roll trait die
     const traitRollPromise = rollExplodingDie(die);
@@ -746,7 +768,7 @@ async function rollTrait(selectId, traitName) {
     // Build result string
     let details = `d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
-    if (penalty > 0) details += ` | -${penalty} penalty`;
+    if (penalty > 0) details += ` | -${penalty} penalty${characterData.distracted ? ' (distracted)' : ''}`;
     if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier} mod`;
 
     const exploded = traitRoll.exploded || wildRoll.exploded;
@@ -926,6 +948,8 @@ function loadCharacter() {
         fatigue: data.fatigue || 0,
         incapacitated: data.incapacitated || false,
         shaken: data.shaken || false,
+        distracted: data.distracted || false,
+        vulnerable: data.vulnerable || false,
         bennies: data.bennies !== undefined ? data.bennies : 3
     };
 
