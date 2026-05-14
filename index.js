@@ -2,7 +2,7 @@
 import DiceBox from "https://unpkg.com/@3d-dice/dice-box@1.0.8/dist/dice-box.es.min.js";
 
 
-const diceBox = new DiceBox("#dice-canvas",{
+const diceBox = new DiceBox("#dice-canvas", {
     assetPath: "assets/",
     origin: "https://unpkg.com/@3d-dice/dice-box@1.0.8/dist/",
     theme: "default",
@@ -395,15 +395,15 @@ async function rollDamage(weaponName, damageExpr) {
 
 // Add power row
 function addPower() {
-    const name     = document.getElementById('newPowerName').value.trim();
-    const pp       = document.getElementById('newPowerPP').value.trim();
-    const range    = document.getElementById('newPowerRange').value.trim();
+    const name = document.getElementById('newPowerName').value.trim();
+    const pp = document.getElementById('newPowerPP').value.trim();
+    const range = document.getElementById('newPowerRange').value.trim();
     const duration = document.getElementById('newPowerDuration').value.trim();
-    const effect   = document.getElementById('newPowerEffect').value.trim();
+    const effect = document.getElementById('newPowerEffect').value.trim();
     if (!name) return;
     characterData.powers.push({ name, pp, range, duration, effect });
     renderPowersTable();
-    ['newPowerName','newPowerPP','newPowerRange','newPowerDuration','newPowerEffect']
+    ['newPowerName', 'newPowerPP', 'newPowerRange', 'newPowerDuration', 'newPowerEffect']
         .forEach(id => { document.getElementById(id).value = ''; });
     saveCharacter();
 }
@@ -458,20 +458,20 @@ function addGear() {
 
 // Add weapon row
 function addWeapon() {
-    const skill  = document.getElementById('newWeaponSkill').value;
-    const name   = document.getElementById('newWeaponName').value.trim();
-    const range  = document.getElementById('newWeaponRange').value.trim();
+    const skill = document.getElementById('newWeaponSkill').value;
+    const name = document.getElementById('newWeaponName').value.trim();
+    const range = document.getElementById('newWeaponRange').value.trim();
     const damage = document.getElementById('newWeaponDamage').value.trim();
-    const ap     = document.getElementById('newWeaponAP').value.trim();
-    const rof    = document.getElementById('newWeaponRoF').value.trim();
-    const wt     = document.getElementById('newWeaponWt').value.trim();
-    const notes  = document.getElementById('newWeaponNotes').value.trim();
+    const ap = document.getElementById('newWeaponAP').value.trim();
+    const rof = document.getElementById('newWeaponRoF').value.trim();
+    const wt = document.getElementById('newWeaponWt').value.trim();
+    const notes = document.getElementById('newWeaponNotes').value.trim();
     if (!name) return;
     characterData.weapons.push({ skill, name, range, damage, ap, rof, wt, notes });
     renderWeaponsTable();
     document.getElementById('newWeaponSkill').value = 'Fighting';
-    ['newWeaponName','newWeaponRange','newWeaponDamage','newWeaponAP',
-     'newWeaponRoF','newWeaponWt','newWeaponNotes']
+    ['newWeaponName', 'newWeaponRange', 'newWeaponDamage', 'newWeaponAP',
+        'newWeaponRoF', 'newWeaponWt', 'newWeaponNotes']
         .forEach(id => { document.getElementById(id).value = ''; });
     saveCharacter();
 }
@@ -611,10 +611,10 @@ async function rollShakenRecovery() {
     const wildRoll = await wildRollPromise;
 
     const traitTotal = traitRoll.total - penalty;
-    const wildTotal  = wildRoll.total  - penalty;
-    const bestTotal  = Math.max(traitTotal, wildTotal) + modifier;
-    const usedWild   = wildTotal > traitTotal;
-    const exploded   = traitRoll.exploded || wildRoll.exploded;
+    const wildTotal = wildRoll.total - penalty;
+    const bestTotal = Math.max(traitTotal, wildTotal) + modifier;
+    const usedWild = wildTotal > traitTotal;
+    const exploded = traitRoll.exploded || wildRoll.exploded;
 
     let details = `d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
@@ -780,7 +780,7 @@ async function rollSkill(skillName) {
     }
     GLOBAL_ROLL_LOCK = true
     diceBox.clear()
-    
+
     const select = document.querySelector(`[data-skill="${skillName}"]`);
     const die = parseInt(select.value) || 4; // 4 if unskilled
     const isUnskilled = !select.value || select.value === '0';

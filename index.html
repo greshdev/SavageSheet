@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Savage Sheet</title>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
     <script src="index.js" type="module"></script>
 </head>
+
 <body>
     <div id="dice-canvas"></div>
     <div class="container">
@@ -33,7 +37,8 @@
                                 <option value="10">d10</option>
                                 <option value="12">d12</option>
                             </select>
-                            <button class="roll-trait-btn" data-trait-roller="Agility" data-trait-input="attr-agility">⚄</button>
+                            <button class="roll-trait-btn" data-trait-roller="Agility"
+                                data-trait-input="attr-agility">⚄</button>
                         </div>
                     </div>
                     <div class="attribute">
@@ -46,7 +51,8 @@
                                 <option value="10">d10</option>
                                 <option value="12">d12</option>
                             </select>
-                            <button class="roll-trait-btn" data-trait-roller="Smarts" data-trait-input="attr-smarts">⚄</button>
+                            <button class="roll-trait-btn" data-trait-roller="Smarts"
+                                data-trait-input="attr-smarts">⚄</button>
                         </div>
                     </div>
                     <div class="attribute">
@@ -59,7 +65,8 @@
                                 <option value="10">d10</option>
                                 <option value="12">d12</option>
                             </select>
-                            <button class="roll-trait-btn" data-trait-roller="Spirit" data-trait-input="attr-spirit">⚄</button>
+                            <button class="roll-trait-btn" data-trait-roller="Spirit"
+                                data-trait-input="attr-spirit">⚄</button>
                         </div>
                     </div>
                     <div class="attribute">
@@ -72,7 +79,8 @@
                                 <option value="10">d10</option>
                                 <option value="12">d12</option>
                             </select>
-                            <button class="roll-trait-btn" data-trait-roller="Strength" data-trait-input="attr-strength">⚄</button>
+                            <button class="roll-trait-btn" data-trait-roller="Strength"
+                                data-trait-input="attr-strength">⚄</button>
                         </div>
                     </div>
                     <div class="attribute">
@@ -85,7 +93,8 @@
                                 <option value="10">d10</option>
                                 <option value="12">d12</option>
                             </select>
-                            <button class="roll-trait-btn" data-trait-roller="Vigor" data-trait-input="attr-vigor">⚄</button>
+                            <button class="roll-trait-btn" data-trait-roller="Vigor"
+                                data-trait-input="attr-vigor">⚄</button>
                         </div>
                     </div>
                 </div>
@@ -171,11 +180,14 @@
                                 </div>
                                 <div class="shaken-row">
                                     <button class="shaken-toggle" id="shakenToggle">Shaken</button>
-                                    <button class="shaken-recover-btn roll-skill-btn" id="shakenRecoverBtn" title="Roll Spirit to recover">⚄</button>
+                                    <button class="shaken-recover-btn roll-skill-btn" id="shakenRecoverBtn"
+                                        title="Roll Spirit to recover">⚄</button>
                                 </div>
                                 <div class="status-toggles">
-                                    <button class="status-toggle" id="distractedToggle" title="−2 to all Trait rolls">Distracted</button>
-                                    <button class="status-toggle" id="vulnerableToggle" title="Attackers get +2 to hit">Vulnerable</button>
+                                    <button class="status-toggle" id="distractedToggle"
+                                        title="−2 to all Trait rolls">Distracted</button>
+                                    <button class="status-toggle" id="vulnerableToggle"
+                                        title="Attackers get +2 to hit">Vulnerable</button>
                                 </div>
                             </div>
                         </div>
@@ -307,7 +319,8 @@
         <!-- Notes Section -->
         <div class="notes-section">
             <h3 class="section-header">Notes & Background</h3>
-            <textarea class="gear-textarea" id="notes" placeholder="Character background, campaign notes, allies, enemies..."></textarea>
+            <textarea class="gear-textarea" id="notes"
+                placeholder="Character background, campaign notes, allies, enemies..."></textarea>
         </div>
     </div>
 
@@ -323,7 +336,7 @@
             <span class="sidebar-title">Settings</span>
             <button class="sidebar-close" id="sidebarClose">×</button>
         </div>
-        
+
         <div class="sidebar-section">
             <h4 class="sidebar-section-title">Dice Colors</h4>
             <div class="color-option">
@@ -335,7 +348,7 @@
                 <input type="color" id="wildDiceColor" class="color-picker" value="#7f0e0e">
             </div>
         </div>
-        
+
         <div class="sidebar-section">
             <h4 class="sidebar-section-title">Character File</h4>
             <div class="sidebar-buttons">
@@ -350,7 +363,8 @@
 
     <!-- Dice Roller -->
     <div class="dice-roller">
-        <button class="roll-history-toggle" id="rollHistoryToggle" title="Hide roll history" style="display: none">▼</button>
+        <button class="roll-history-toggle" id="rollHistoryToggle" title="Hide roll history"
+            style="display: none">▼</button>
         <div class="roll-history" id="rollHistory"></div>
         <div class="roll-info">
             <span class="roll-name" id="rollName">Ready</span>
@@ -374,4 +388,5 @@
         </div>
     </div>
 </body>
+
 </html>
