@@ -111,7 +111,8 @@ let characterData = {
     incapacitated: false,
     bennies: 3,
     currentPP: 0,
-    maxPP: 0
+    maxPP: 0,
+    shaken: false
 };
 
 function setSkillOrder(row, value) {
@@ -521,6 +522,13 @@ function initTrackers() {
         saveCharacter();
     });
 
+    // Shaken toggle
+    document.getElementById('shakenToggle').addEventListener('click', () => {
+        characterData.shaken = !characterData.shaken;
+        updateShakenDisplay();
+        saveCharacter();
+    });
+
     // Initialize bennies display
     renderBennies();
 }
@@ -545,6 +553,13 @@ function updateWoundsFatigueDisplay() {
     // Visual hint that incap is clickable when at threshold
     const atThreshold = (characterData.wounds >= 3 || characterData.fatigue >= 2) && !characterData.incapacitated;
     incapBox.classList.toggle('available', atThreshold);
+
+    updateShakenDisplay();
+}
+
+function updateShakenDisplay() {
+    const btn = document.getElementById('shakenToggle');
+    if (btn) btn.classList.toggle('shaken-active', characterData.shaken);
 }
 
 // Render bennies
@@ -834,6 +849,7 @@ function loadCharacter() {
         wounds: data.wounds || 0,
         fatigue: data.fatigue || 0,
         incapacitated: data.incapacitated || false,
+        shaken: data.shaken || false,
         bennies: data.bennies !== undefined ? data.bennies : 3
     };
 
