@@ -860,6 +860,12 @@ body {
     color: var(--ink-faded);
     text-align: right;
     letter-spacing: 0.05em;
+    transition: color 0.2s ease;
+}
+
+.gear-total.over-encumbered {
+    color: var(--blood-red);
+    font-weight: 700;
 }
 
 /* Right sidebar: tracker + lists */
@@ -882,9 +888,19 @@ body {
     margin: 0 auto;
 }
 
-.shaken-toggle {
+.shaken-row {
+    display: flex;
+    gap: 0.4rem;
     margin-top: 0.5rem;
     width: 100%;
+}
+
+.shaken-recover-btn {
+    flex-shrink: 0;
+}
+
+.shaken-toggle {
+    flex: 1;
     padding: 0.2rem 0.5rem;
     font-family: 'Cinzel', serif;
     font-size: 0.65rem;

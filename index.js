@@ -164,7 +164,7 @@ function initSkills() {
     });
 
     // Add event listeners for skill roll buttons
-    document.querySelectorAll('.roll-skill-btn').forEach(btn => {
+    container.querySelectorAll('.roll-skill-btn').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const skillName = e.target.dataset.skill;
             rollSkill(skillName);
@@ -206,6 +206,9 @@ function updateDerivedStats() {
     const size = parseInt(document.getElementById('size').value) || 0;
     const toughness = 2 + Math.floor(vigor / 2) + size;
     document.getElementById('toughness').textContent = toughness;
+
+    // Encumbrance limit depends on Strength
+    updateGearTotal();
 }
 
 // Build slot inputs for Hindrances and Edges
@@ -436,7 +439,11 @@ function renderGearList() {
 
 function updateGearTotal() {
     const total = characterData.gear.reduce((sum, item) => sum + (parseFloat(item.weight) || 0), 0);
+    const strengthDie = parseInt(document.getElementById('attr-strength').value) || 4;
+    const maxWeight = strengthDie * 20;
     document.getElementById('gearTotal').textContent = total % 1 === 0 ? total : total.toFixed(1);
+    document.getElementById('gearLimit').textContent = maxWeight;
+    document.getElementById('gearTotalRow').classList.toggle('over-encumbered', total > maxWeight);
 }
 
 // Add gear item
@@ -529,6 +536,9 @@ function initTrackers() {
         saveCharacter();
     });
 
+    // Spirit recovery roll
+    document.getElementById('shakenRecoverBtn').addEventListener('click', rollShakenRecovery);
+
     // Initialize bennies display
     renderBennies();
 }
@@ -560,6 +570,44 @@ function updateWoundsFatigueDisplay() {
 function updateShakenDisplay() {
     const btn = document.getElementById('shakenToggle');
     if (btn) btn.classList.toggle('shaken-active', characterData.shaken);
+}
+
+async function rollShakenRecovery() {
+    if (GLOBAL_ROLL_LOCK) return;
+    GLOBAL_ROLL_LOCK = true;
+    diceBox.clear();
+
+    const die = parseInt(document.getElementById('attr-spirit').value);
+    const penalty = characterData.wounds + characterData.fatigue;
+    const modifier = getRollModifier();
+
+    const traitRollPromise = rollExplodingDie(die);
+    const wildRollPromise = rollWildDie();
+    const traitRoll = await traitRollPromise;
+    const wildRoll = await wildRollPromise;
+
+    const traitTotal = traitRoll.total - penalty;
+    const wildTotal  = wildRoll.total  - penalty;
+    const bestTotal  = Math.max(traitTotal, wildTotal) + modifier;
+    const usedWild   = wildTotal > traitTotal;
+    const exploded   = traitRoll.exploded || wildRoll.exploded;
+
+    let details = `d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
+    details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
+    if (penalty > 0) details += ` | -${penalty} penalty`;
+    if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier} mod`;
+
+    if (bestTotal >= 4) {
+        characterData.shaken = false;
+        updateShakenDisplay();
+        saveCharacter();
+        details += ' | ✓ Shaken cleared!';
+    } else {
+        details += ' | ✗ Still shaken';
+    }
+
+    showRollResult('Spirit (Recover)', bestTotal, exploded, details, usedWild);
+    clearDice();
 }
 
 // Render bennies
