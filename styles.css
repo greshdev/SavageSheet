@@ -697,7 +697,7 @@ body {
     justify-content: center;
 }
 
-.roll-skill-btn:hover {
+.roll-skill-btn:hover:not(:disabled) {
     background: var(--gold);
     border-color: var(--gold);
     transform: rotate(15deg);

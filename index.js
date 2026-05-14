@@ -584,6 +584,12 @@ function updateWoundsFatigueDisplay() {
 function updateShakenDisplay() {
     const btn = document.getElementById('shakenToggle');
     if (btn) btn.classList.toggle('shaken-active', characterData.shaken);
+    const recoverBtn = document.getElementById('shakenRecoverBtn');
+    if (recoverBtn) {
+        recoverBtn.disabled = !characterData.shaken;
+        recoverBtn.style.opacity = characterData.shaken ? '1' : '0.3';
+        recoverBtn.style.cursor = characterData.shaken ? 'pointer' : 'not-allowed';
+    }
 }
 
 function updateStatusDisplay() {
