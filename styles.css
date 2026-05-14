@@ -1154,18 +1154,46 @@ body {
 .powers-table td:nth-child(6) { width: 30px; }
 
 /* Weapons column widths + alignment */
-.weapons-table th:nth-child(2),
-.weapons-table td:nth-child(2) { width: 70px; text-align: center; }
+.weapons-table th:nth-child(1),
+.weapons-table td:nth-child(1) { width: 28px; }
 .weapons-table th:nth-child(3),
-.weapons-table td:nth-child(3) { text-align: center; }
+.weapons-table td:nth-child(3) { width: 80px; }
 .weapons-table th:nth-child(4),
-.weapons-table td:nth-child(4),
+.weapons-table td:nth-child(4) { width: 70px; text-align: center; }
 .weapons-table th:nth-child(5),
-.weapons-table td:nth-child(5),
+.weapons-table td:nth-child(5) { text-align: center; }
 .weapons-table th:nth-child(6),
-.weapons-table td:nth-child(6) { width: 45px; text-align: center; }
+.weapons-table td:nth-child(6),
+.weapons-table th:nth-child(7),
+.weapons-table td:nth-child(7),
 .weapons-table th:nth-child(8),
-.weapons-table td:nth-child(8) { width: 30px; }
+.weapons-table td:nth-child(8) { width: 45px; text-align: center; }
+.weapons-table th:nth-child(10),
+.weapons-table td:nth-child(10) { width: 30px; }
+
+.weapon-skill-select {
+    appearance: none;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gold-dark);
+    font-family: 'Crimson Text', serif;
+    font-size: 0.85rem;
+    color: var(--ink);
+    cursor: pointer;
+    width: 100%;
+    padding: 0.1rem 0;
+}
+
+.weapon-skill-select:focus {
+    outline: none;
+    border-bottom-color: var(--blood-red);
+}
+
+.weapon-attack-btn {
+    width: 24px;
+    height: 24px;
+    font-size: 0.85rem;
+}
 
 /* Add-row forms */
 .add-table-row-form {

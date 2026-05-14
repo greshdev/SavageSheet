@@ -262,7 +262,9 @@
                         <table class="sheet-table weapons-table">
                             <thead>
                                 <tr>
+                                    <th></th>
                                     <th>Weapon</th>
+                                    <th>Type</th>
                                     <th>Range</th>
                                     <th>Damage</th>
                                     <th>AP</th>
@@ -276,6 +278,10 @@
                         </table>
                     </div>
                     <div class="add-table-row-form" id="addWeaponForm">
+                        <select id="newWeaponSkill" class="weapon-skill-select">
+                            <option value="Fighting">Melee Weapon</option>
+                            <option value="Shooting">Ranged Weapon</option>
+                        </select>
                         <input type="text" id="newWeaponName" placeholder="Weapon name">
                         <input type="text" id="newWeaponRange" placeholder="Range">
                         <input type="text" id="newWeaponDamage" placeholder="Damage">

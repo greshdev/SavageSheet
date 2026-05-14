@@ -267,10 +267,18 @@ function renderWeaponsTable() {
     const tbody = document.getElementById('weaponsTableBody');
     tbody.innerHTML = '';
     characterData.weapons.forEach((w, index) => {
-        const tr = document.createElement('tr');
+        const skill = w.skill || 'Fighting';
         const hasRollable = w.damage && /d\d+/i.test(w.damage);
+        const tr = document.createElement('tr');
         tr.innerHTML = `
+            <td><button class="roll-skill-btn weapon-attack-btn" title="Roll ${skill}">⚄</button></td>
             <td>${w.name}</td>
+            <td>
+                <select class="weapon-skill-select" data-weapon-index="${index}">
+                    <option value="Fighting" ${skill === 'Fighting' ? 'selected' : ''}>Melee</option>
+                    <option value="Shooting" ${skill === 'Shooting' ? 'selected' : ''}>Ranged</option>
+                </select>
+            </td>
             <td>${w.range}</td>
             <td class="${hasRollable ? 'damage-rollable' : ''}" title="${hasRollable ? 'Click to roll damage' : ''}">${w.damage}</td>
             <td>${w.ap}</td>
@@ -279,11 +287,23 @@ function renderWeaponsTable() {
             <td>${w.notes}</td>
             <td><button class="remove-btn" data-remove-type="weapons" data-remove-index="${index}">×</button></td>
         `;
+
+        tr.querySelector('.weapon-attack-btn').addEventListener('click', () => {
+            rollSkill(characterData.weapons[index].skill || 'Fighting');
+        });
+
+        tr.querySelector('.weapon-skill-select').addEventListener('change', e => {
+            characterData.weapons[index].skill = e.target.value;
+            tr.querySelector('.weapon-attack-btn').title = `Roll ${e.target.value}`;
+            saveCharacter();
+        });
+
         if (hasRollable) {
             tr.querySelector('.damage-rollable').addEventListener('click', () => {
                 rollDamage(w.name || 'Weapon', w.damage);
             });
         }
+
         tbody.appendChild(tr);
     });
 }
@@ -402,6 +422,7 @@ function addGear() {
 
 // Add weapon row
 function addWeapon() {
+    const skill  = document.getElementById('newWeaponSkill').value;
     const name   = document.getElementById('newWeaponName').value.trim();
     const range  = document.getElementById('newWeaponRange').value.trim();
     const damage = document.getElementById('newWeaponDamage').value.trim();
@@ -410,8 +431,9 @@ function addWeapon() {
     const wt     = document.getElementById('newWeaponWt').value.trim();
     const notes  = document.getElementById('newWeaponNotes').value.trim();
     if (!name) return;
-    characterData.weapons.push({ name, range, damage, ap, rof, wt, notes });
+    characterData.weapons.push({ skill, name, range, damage, ap, rof, wt, notes });
     renderWeaponsTable();
+    document.getElementById('newWeaponSkill').value = 'Fighting';
     ['newWeaponName','newWeaponRange','newWeaponDamage','newWeaponAP',
      'newWeaponRoF','newWeaponWt','newWeaponNotes']
         .forEach(id => { document.getElementById(id).value = ''; });
@@ -769,7 +791,7 @@ function loadCharacter() {
                 ? { name: p, pp: '', range: '', duration: '', effect: '' }
                 : p
         ),
-        weapons: data.weapons || [],
+        weapons: (data.weapons || []).map(w => ({ skill: 'Fighting', ...w })),
         gear: typeof data.gear === 'string'
             ? data.gear.split('\n').map(s => s.trim()).filter(Boolean).map(name => ({ name, weight: '' }))
             : (data.gear || []),
