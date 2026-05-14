@@ -9,7 +9,7 @@ const diceBox = new DiceBox("#dice-canvas",{
     //   themeColor: "#feea03",
     offscreen: true,
     // Physics
-    gravity: 1,
+    gravity: 2,
     mass: 1,
     friction: .8,
     restitution: 0,
@@ -305,6 +305,13 @@ function renderBennies() {
         });
         container.appendChild(benny);
     }
+
+    const addBennyBtn = document.createElement("button")
+    addBennyBtn.className = "add-benny-btn"
+    addBennyBtn.textContent = "+"
+    addBennyBtn.title = "Click to add benny"
+    addBennyBtn.addEventListener("click", addBenny)
+    container.appendChild(addBennyBtn)
 }
 
 // Spend a benny with animation
@@ -611,10 +618,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         element.addEventListener("click", async () => {
             await rollTrait(traitInputId, trait)
         })
-    })
-
-    document.querySelectorAll("[data-add-benny]").forEach(element => {
-        element.addEventListener("click", () => addBenny())
     })
 
     document.querySelectorAll("[data-roll-dice]").forEach(element => {
