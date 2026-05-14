@@ -780,6 +780,16 @@ document.addEventListener('DOMContentLoaded', async () => {
         element.addEventListener("click", () => addItem(itemType))
     })
 
+    // Tab switching for Edges/Hindrances
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
+            btn.classList.add('active');
+            document.getElementById(`tab-${btn.dataset.tab}`).hidden = false;
+        });
+    });
+
     // Export/Import event listeners
     document.getElementById('exportBtn').addEventListener('click', exportCharacter);
     document.getElementById('importBtn').addEventListener('click', () => {

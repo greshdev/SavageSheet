@@ -413,7 +413,7 @@ body {
 /* Status Row */
 .status-row {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-around;
     gap: 2rem;
     margin: 1.5rem 0;
@@ -593,11 +593,49 @@ body {
     }
 }
 
-/* Edges & Hindrances */
-.edges-hindrances {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1.5rem;
+/* Edges & Hindrances (tabbed) */
+.edges-hindrances-tabs {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1.5rem;
+}
+
+.tab-buttons {
+    display: flex;
+    border-bottom: 2px solid var(--gold);
+    margin-bottom: 0;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 0.5rem 1rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    background: transparent;
+    color: var(--ink-faded);
+    border: none;
+    border-bottom: 3px solid transparent;
+    margin-bottom: -2px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+    color: var(--blood-red);
+}
+
+.tab-btn.active {
+    color: var(--blood-red);
+    border-bottom-color: var(--blood-red);
+    background: rgba(139, 37, 0, 0.05);
+}
+
+.tab-panel {
+    border-top: none;
+    border-radius: 0 0 4px 4px;
 }
 
 .list-container {
@@ -760,7 +798,10 @@ body {
 /* Bennies */
 .bennies-section {
     text-align: center;
-    margin-bottom: 1.5rem;
+}
+
+.bennies-section .section-header {
+    margin-top: 0;
 }
 
 .bennies-container {
@@ -979,9 +1020,6 @@ body {
         justify-content: center;
     }
 
-    .edges-hindrances {
-        grid-template-columns: 1fr;
-    }
 
     .dice-roller {
         bottom: 1rem;

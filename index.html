@@ -137,7 +137,7 @@
             </div>
         </div>
 
-        <!-- Status Row: Derived Stats + Wounds/Fatigue -->
+        <!-- Status Row: Derived Stats + Wounds/Fatigue + Bennies -->
         <div class="status-row">
             <div class="derived-stats">
                 <div class="derived-stat">
@@ -168,6 +168,13 @@
                     <div class="tracker-box fatigue-box" data-index="1">−1</div>
                 </div>
             </div>
+
+            <div class="bennies-section">
+                <h3 class="section-header">Bennies</h3>
+                <div class="bennies-container" id="benniesContainer">
+                    <!-- Bennies will be rendered by JS -->
+                </div>
+            </div>
         </div>
 
         <!-- Main Grid -->
@@ -180,28 +187,22 @@
                 </div>
             </div>
 
-            <!-- Right Column: Bennies, Edges & Hindrances -->
+            <!-- Right Column: Edges & Hindrances -->
             <div>
-                <!-- Bennies -->
-                <div class="bennies-section">
-                    <h3 class="section-header">Bennies</h3>
-                    <div class="bennies-container" id="benniesContainer">
-                        <!-- Bennies will be rendered by JS -->
+                <!-- Edges & Hindrances (tabbed) -->
+                <div class="edges-hindrances-tabs">
+                    <div class="tab-buttons">
+                        <button class="tab-btn active" data-tab="edges">Edges</button>
+                        <button class="tab-btn" data-tab="hindrances">Hindrances</button>
                     </div>
-                </div>
-
-                <!-- Edges & Hindrances -->
-                <div class="edges-hindrances">
-                    <div class="list-container">
-                        <h4>Edges</h4>
+                    <div class="list-container tab-panel" id="tab-edges">
                         <ul class="item-list" id="edgesList"></ul>
                         <div class="add-item">
                             <input type="text" id="newEdge" placeholder="Add edge...">
                             <button class="add-btn" data-add-item="edges">+</button>
                         </div>
                     </div>
-                    <div class="list-container">
-                        <h4>Hindrances</h4>
+                    <div class="list-container tab-panel" id="tab-hindrances" hidden>
                         <ul class="item-list" id="hindrancesList"></ul>
                         <div class="add-item">
                             <input type="text" id="newHindrance" placeholder="Add hindrance...">
