@@ -210,25 +210,23 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
-    background: var(--blood-red);
-    border-radius: 4px;
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(139, 37, 0, 0.1) 100%);
+    border: 1px solid var(--gold-dark);
+    border-radius: 6px;
     padding: 0.4rem 0.5rem;
 }
 
 .derived-stats-row .info-field label {
-    color: rgba(255, 255, 255, 0.75);
+    color: var(--blood-red);
 }
 
-.derived-stats-row .info-field input,
 .derived-stats-row .rank-display {
-    color: white;
     background: transparent;
-    border-bottom-color: rgba(255, 255, 255, 0.4);
+    border-bottom-color: var(--blood-red);
 }
 
-.derived-stats-row .info-field input:focus {
-    background: rgba(255, 255, 255, 0.15);
-    border-bottom-color: white;
+.derived-stats-row .info-field input {
+    border-bottom-color: var(--blood-red);
 }
 
 .info-field label {
