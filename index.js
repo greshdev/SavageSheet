@@ -746,6 +746,32 @@ async function rollSkill(skillName) {
     clearDice()
 }
 
+// Roll history (session only, not persisted)
+const rollHistory = [];
+const MAX_ROLL_HISTORY = 6;
+
+function addToRollHistory(name, result, exploded) {
+    rollHistory.push({ name, result, exploded });
+    if (rollHistory.length > MAX_ROLL_HISTORY) rollHistory.shift();
+    renderRollHistory();
+}
+
+function renderRollHistory() {
+    const container = document.getElementById('rollHistory');
+    container.innerHTML = '';
+    const total = rollHistory.length;
+    rollHistory.forEach((entry, i) => {
+        const div = document.createElement('div');
+        div.className = 'roll-history-entry' + (entry.exploded ? ' roll-history-exploded' : '');
+        div.style.opacity = Math.max(0.2, 1 - (total - 1 - i) * 0.15);
+        div.innerHTML = `
+            <span class="history-name">${entry.name}</span>
+            <span class="history-result">${entry.result}</span>
+        `;
+        container.appendChild(div);
+    });
+}
+
 // Show roll result in the roller panel
 function showRollResult(name, result, exploded, details = '', usedWild = false) {
     const nameEl = document.getElementById('rollName');
@@ -767,6 +793,8 @@ function showRollResult(name, result, exploded, details = '', usedWild = false) 
     if (exploded) {
         setTimeout(() => resultEl.classList.remove('exploded'), 500);
     }
+
+    addToRollHistory(name, result, exploded);
 }
 
 

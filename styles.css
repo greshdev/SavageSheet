@@ -1562,6 +1562,47 @@ body {
     min-width: 200px;
 }
 
+.roll-history {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-bottom: 0.5rem;
+    empty-cells: hide;
+}
+
+.roll-history:empty {
+    display: none;
+}
+
+.roll-history-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    border-bottom: 1px solid rgba(201, 162, 39, 0.12);
+    padding-bottom: 0.15rem;
+}
+
+.history-name {
+    font-family: 'Crimson Text', serif;
+    font-size: 0.8rem;
+    color: var(--gold-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 65%;
+}
+
+.history-result {
+    font-family: 'Cinzel', serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--parchment);
+}
+
+.roll-history-exploded .history-result {
+    color: #ff6b35;
+}
+
 .roll-info {
     display: flex;
     flex-direction: column;
