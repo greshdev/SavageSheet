@@ -497,9 +497,9 @@ async function rollDice() {
     clearDice()
 }
 
-// Save/Load Character
-function saveCharacter() {
-    const data = {
+// Gather all character data from the form
+function gatherCharacterData() {
+    return {
         ...characterData,
         name: document.getElementById('charName').value,
         ancestry: document.getElementById('ancestry').value,
@@ -519,6 +519,11 @@ function saveCharacter() {
         gear: document.getElementById('gear').value,
         notes: document.getElementById('notes').value
     };
+}
+
+// Save/Load Character
+function saveCharacter() {
+    const data = gatherCharacterData();
     localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
 }
 
@@ -573,6 +578,150 @@ function loadCharacter() {
     updateBenniesDisplay();
     updateDerivedStats();
     updateRank();
+}
+
+// Sanitize filename for export
+function sanitizeFilename(name) {
+    return name
+        .replace(/[^a-zA-Z0-9-_]/g, '-')
+        .replace(/-+/g, '-')
+        .replace(/^-|-$/g, '')
+        || 'unnamed-character';
+}
+
+// Show import/export feedback message
+function showImportExportFeedback(message, isError = false) {
+    const messageEl = document.getElementById('importExportMessage');
+    messageEl.textContent = message;
+    messageEl.className = 'import-export-message show ' + (isError ? 'error' : 'success');
+
+    setTimeout(() => {
+        messageEl.classList.remove('show');
+    }, 5000);
+}
+
+// Validate character data structure
+function validateCharacterData(data) {
+    // Check if data is an object
+    if (typeof data !== 'object' || data === null) {
+        return false;
+    }
+
+    // Validate required arrays
+    if (!Array.isArray(data.edges)) return false;
+    if (!Array.isArray(data.hindrances)) return false;
+    if (!Array.isArray(data.powers)) return false;
+
+    // Validate skills is an object
+    if (typeof data.skills !== 'object' || data.skills === null) return false;
+
+    // Validate skill values
+    const validDice = [0, 4, 6, 8, 10, 12];
+    for (let skill in data.skills) {
+        if (!validDice.includes(data.skills[skill])) return false;
+    }
+
+    // Validate attributes if present
+    if (data.attributes) {
+        const validAttrDice = [4, 6, 8, 10, 12];
+        for (let attr in data.attributes) {
+            const value = parseInt(data.attributes[attr]);
+            if (!validAttrDice.includes(value)) return false;
+        }
+    }
+
+    // Validate numeric ranges
+    if (data.wounds !== undefined) {
+        if (typeof data.wounds !== 'number' || data.wounds < 0 || data.wounds > 3) return false;
+    }
+    if (data.fatigue !== undefined) {
+        if (typeof data.fatigue !== 'number' || data.fatigue < 0 || data.fatigue > 2) return false;
+    }
+    if (data.bennies !== undefined) {
+        if (typeof data.bennies !== 'number' || data.bennies < 0) return false;
+    }
+    if (data.size !== undefined) {
+        const size = parseInt(data.size);
+        if (size < -4 || size > 6) return false;
+    }
+
+    return true;
+}
+
+// Export character as JSON file
+function exportCharacter() {
+    const data = gatherCharacterData();
+
+    // Create filename with character name and date
+    const charName = sanitizeFilename(data.name || 'unnamed-character');
+    const date = new Date().toISOString().split('T')[0];
+    const filename = `${charName}-savage-worlds-${date}.json`;
+
+    // Create and trigger download
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    // Show success feedback
+    showImportExportFeedback('Character exported successfully!', false);
+}
+
+// Import character from JSON file
+function importCharacter(file) {
+    // Validate file type
+    if (!file.name.endsWith('.json')) {
+        showImportExportFeedback('Please select a JSON file', true);
+        return;
+    }
+
+    // Validate file size (1MB max)
+    if (file.size > 1024 * 1024) {
+        showImportExportFeedback('File is too large (max 1MB)', true);
+        return;
+    }
+
+    // Read and parse file
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        try {
+            const data = JSON.parse(e.target.result);
+
+            // Validate structure
+            if (!validateCharacterData(data)) {
+                showImportExportFeedback('Invalid character file format', true);
+                return;
+            }
+
+            // Confirm overwrite if character exists
+            const hasExisting = localStorage.getItem(LOCALSTORAGE_KEY);
+            if (hasExisting) {
+                if (!confirm('This will replace your current character. Continue?')) {
+                    return;
+                }
+            }
+
+            // Save to localStorage and reload
+            localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
+            loadCharacter();
+
+            // Show success feedback
+            showImportExportFeedback('Character imported successfully!', false);
+
+        } catch (error) {
+            showImportExportFeedback('Failed to read character file', true);
+            console.error('Import error:', error);
+        }
+    };
+
+    reader.onerror = () => {
+        showImportExportFeedback('Failed to read file', true);
+    };
+
+    reader.readAsText(file);
 }
 
 // Event Listeners for Auto-save
@@ -630,4 +779,17 @@ document.addEventListener('DOMContentLoaded', async () => {
         const itemType = element.getAttribute("data-add-item")
         element.addEventListener("click", () => addItem(itemType))
     })
+
+    // Export/Import event listeners
+    document.getElementById('exportBtn').addEventListener('click', exportCharacter);
+    document.getElementById('importBtn').addEventListener('click', () => {
+        document.getElementById('importFile').click();
+    });
+    document.getElementById('importFile').addEventListener('change', (e) => {
+        if (e.target.files[0]) {
+            importCharacter(e.target.files[0]);
+            // Reset file input so same file can be imported again
+            e.target.value = '';
+        }
+    });
 });

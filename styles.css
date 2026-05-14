@@ -146,6 +146,68 @@ body {
     letter-spacing: 0.05em;
 }
 
+/* Import/Export */
+.import-export-section {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    z-index: 1;
+}
+
+.import-export-btn {
+    padding: 0.5rem 1rem;
+    font-family: 'Cinzel', serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    background: var(--blood-red);
+    color: var(--parchment);
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 140px;
+}
+
+.import-export-btn:hover {
+    background: var(--gold);
+    color: var(--ink);
+}
+
+.import-export-message {
+    position: fixed;
+    bottom: 8rem;
+    left: 2rem;
+    font-family: 'Crimson Text', serif;
+    font-size: 0.85rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    max-width: 200px;
+    z-index: 1;
+}
+
+.import-export-message.show {
+    opacity: 1;
+}
+
+.import-export-message.error {
+    background: rgba(139, 37, 0, 0.9);
+    color: var(--parchment);
+    border: 1px solid var(--blood-red);
+}
+
+.import-export-message.success {
+    background: rgba(201, 162, 39, 0.9);
+    color: var(--ink);
+    border: 1px solid var(--gold);
+}
+
 /* Section Headers */
 .section-header {
     font-family: 'Cinzel', serif;
