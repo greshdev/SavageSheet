@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savage Worlds Character Sheet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700;900&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script src="index.js" type="module"></script>
+</head>
+<body>
+    <div id="dice-canvas"></div>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1 class="title">Savage Worlds</h1>
+            <p class="subtitle">Character Sheet</p>
+        </header>
+
+        <!-- Character Info -->
+        <section class="character-info">
+            <div class="info-field">
+                <label>Character Name</label>
+                <input type="text" id="charName" placeholder="Enter name...">
+            </div>
+            <div class="info-field">
+                <label>Ancestry</label>
+                <input type="text" id="ancestry" placeholder="Human, Elf, etc.">
+            </div>
+            <div class="info-field">
+                <label>Concept</label>
+                <input type="text" id="concept" placeholder="Gunslinger, Wizard, etc.">
+            </div>
+            <div class="info-field">
+                <label>Size</label>
+                <select id="size">
+                    <option value="-4">Tiny (-4)</option>
+                    <option value="-3">Very Small (-3)</option>
+                    <option value="-2">Small (-2)</option>
+                    <option value="-1">Slightly Small (-1)</option>
+                    <option value="0" selected>Normal (0)</option>
+                    <option value="1">Slightly Large (+1)</option>
+                    <option value="2">Large (+2)</option>
+                    <option value="3">Very Large (+3)</option>
+                    <option value="4">Huge (+4)</option>
+                    <option value="5">Giant (+5)</option>
+                    <option value="6">Gargantuan (+6)</option>
+                </select>
+            </div>
+            <div class="info-field">
+                <label>Advances</label>
+                <input type="number" id="advances" value="0" min="0">
+            </div>
+            <div class="info-field">
+                <label>Rank</label>
+                <div class="rank-display" id="rankDisplay">Novice</div>
+            </div>
+        </section>
+
+        <!-- Attributes -->
+        <h3 class="section-header">Attributes</h3>
+        <div class="attributes-grid">
+            <div class="attribute">
+                <div class="attribute-name">Agility</div>
+                <div class="attribute-controls">
+                    <select class="die-select" id="attr-agility" data-attr="agility">
+                        <option value="4">d4</option>
+                        <option value="6">d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                    </select>
+                    <button class="roll-trait-btn" 
+                        data-trait-roller="Agility"
+                        data-trait-input="attr-agility">⚄</button>
+                </div>
+            </div>
+            <div class="attribute">
+                <div class="attribute-name">Smarts</div>
+                <div class="attribute-controls">
+                    <select class="die-select" id="attr-smarts" data-attr="smarts">
+                        <option value="4">d4</option>
+                        <option value="6">d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                    </select>
+                    <button class="roll-trait-btn"
+                        data-trait-roller="Smarts"
+                        data-trait-input="attr-smarts">⚄</button>
+                </div>
+            </div>
+            <div class="attribute">
+                <div class="attribute-name">Spirit</div>
+                <div class="attribute-controls">
+                    <select class="die-select" id="attr-spirit" data-attr="spirit">
+                        <option value="4">d4</option>
+                        <option value="6">d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                    </select>
+                    <button class="roll-trait-btn" 
+                        data-trait-roller="Spirit"
+                        data-trait-input="attr-spirit">⚄</button>
+                </div>
+            </div>
+            <div class="attribute">
+                <div class="attribute-name">Strength</div>
+                <div class="attribute-controls">
+                    <select class="die-select" id="attr-strength" data-attr="strength">
+                        <option value="4">d4</option>
+                        <option value="6">d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                    </select>
+                    <button class="roll-trait-btn" 
+                        data-trait-roller="Strength"
+                        data-trait-input="attr-strength">⚄</button>
+                </div>
+            </div>
+            <div class="attribute">
+                <div class="attribute-name">Vigor</div>
+                <div class="attribute-controls">
+                    <select class="die-select" id="attr-vigor" data-attr="vigor">
+                        <option value="4">d4</option>
+                        <option value="6">d6</option>
+                        <option value="8">d8</option>
+                        <option value="10">d10</option>
+                        <option value="12">d12</option>
+                    </select>
+                    <button class="roll-trait-btn" 
+                        data-trait-roller="Vigor"
+                        data-trait-input="attr-vigor">⚄</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Row: Derived Stats + Wounds/Fatigue -->
+        <div class="status-row">
+            <div class="derived-stats">
+                <div class="derived-stat">
+                    <span class="derived-stat-name">Pace</span>
+                    <input type="number" class="derived-stat-value" id="pace" value="6">
+                </div>
+                <div class="derived-stat">
+                    <span class="derived-stat-name">Parry</span>
+                    <span class="derived-stat-value" id="parry">4</span>
+                </div>
+                <div class="derived-stat">
+                    <span class="derived-stat-name">Toughness</span>
+                    <span class="derived-stat-value" id="toughness">4</span>
+                </div>
+            </div>
+
+            <div class="condition-tracker-unified">
+                <div class="tracker-labels">
+                    <span class="tracker-label-left">Wounds</span>
+                    <span class="tracker-label-right">Fatigue</span>
+                </div>
+                <div class="tracker-strip">
+                    <div class="tracker-box wound-box" data-index="1">−1</div>
+                    <div class="tracker-box wound-box" data-index="2">−2</div>
+                    <div class="tracker-box wound-box" data-index="3">−3</div>
+                    <div class="tracker-box incapacitated" id="incapBox">✕</div>
+                    <div class="tracker-box fatigue-box" data-index="2">−2</div>
+                    <div class="tracker-box fatigue-box" data-index="1">−1</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Left Column: Skills -->
+            <div>
+                <h3 class="section-header">Skills</h3>
+                <div class="skills-container" id="skillsContainer">
+                    <!-- Skills will be populated by JS -->
+                </div>
+            </div>
+
+            <!-- Right Column: Bennies, Edges & Hindrances -->
+            <div>
+                <!-- Bennies -->
+                <div class="bennies-section">
+                    <h3 class="section-header">Bennies</h3>
+                    <div class="bennies-container" id="benniesContainer">
+                        <!-- Bennies will be rendered by JS -->
+                    </div>
+                    <button class="add-benny-btn" data-add-benny>+ Add Benny</button>
+                </div>
+
+                <!-- Edges & Hindrances -->
+                <div class="edges-hindrances">
+                    <div class="list-container">
+                        <h4>Edges</h4>
+                        <ul class="item-list" id="edgesList"></ul>
+                        <div class="add-item">
+                            <input type="text" id="newEdge" placeholder="Add edge...">
+                            <button class="add-btn" data-add-item="edges">+</button>
+                        </div>
+                    </div>
+                    <div class="list-container">
+                        <h4>Hindrances</h4>
+                        <ul class="item-list" id="hindrancesList"></ul>
+                        <div class="add-item">
+                            <input type="text" id="newHindrance" placeholder="Add hindrance...">
+                            <button class="add-btn" data-add-item="hindrances">+</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Powers Section -->
+        <div class="powers-section">
+            <h3 class="section-header">Powers</h3>
+            <div class="power-points-tracker">
+                <span class="power-points-label">Current Power Points:</span>
+                <input type="number" class="power-points-input" id="currentPP" value="0" min="0">
+                <span class="power-points-label">/</span>
+                <input type="number" class="power-points-input" id="maxPP" value="0" min="0">
+                <span class="power-points-label">Max</span>
+            </div>
+            <div class="list-container">
+                <ul class="item-list" id="powersList"></ul>
+                <div class="add-item">
+                    <input type="text" id="newPower" placeholder="Add power (e.g., Bolt - 1PP - 2d6 damage)...">
+                    <button class="add-btn" data-add-item="powers">+</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Gear Section -->
+        <div class="gear-section">
+            <h3 class="section-header">Gear & Equipment</h3>
+            <textarea class="gear-textarea" id="gear" placeholder="List your weapons, armor, equipment, and money here..."></textarea>
+        </div>
+
+        <!-- Notes Section -->
+        <div class="notes-section">
+            <h3 class="section-header">Notes & Background</h3>
+            <textarea class="gear-textarea" id="notes" placeholder="Character background, campaign notes, allies, enemies..."></textarea>
+        </div>
+    </div>
+
+    <!-- Dice Roller -->
+    <div class="dice-roller">
+        <div class="roll-info">
+            <span class="roll-name" id="rollName">Ready</span>
+            <span class="roll-result" id="rollResult">--</span>
+            <span class="roll-details" id="rollDetails"></span>
+        </div>
+        <div class="roll-controls">
+            <select id="quickDie" class="die-select" style="background: var(--parchment);">
+                <option value="4">d4</option>
+                <option value="6">d6</option>
+                <option value="8">d8</option>
+                <option value="10">d10</option>
+                <option value="12">d12</option>
+                <option value="20">d20</option>
+            </select>
+            <button class="roll-btn" data-roll-dice>Roll</button>
+        </div>
+    </div>
+</body>
+</html>
