@@ -1069,7 +1069,7 @@ function exportCharacter() {
     // Create filename with character name and date
     const charName = sanitizeFilename(data.name || 'unnamed-character');
     const date = new Date().toISOString().split('T')[0];
-    const filename = `${charName}-savage-worlds-${date}.json`;
+    const filename = `${charName}-savage-sheet-${date}.json`;
 
     // Create and trigger download
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
