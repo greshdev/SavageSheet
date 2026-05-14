@@ -76,7 +76,8 @@ const LOCALSTORAGE_KEY = "savageWorldsCharacter"
 let characterData = {
     edges: [],
     hindrances: [],
-    powers: [],
+    powers: [],   // { name, pp, range, duration, effect }
+    weapons: [],  // { name, range, damage, ap, rof, wt, notes }
     skills: {},
     wounds: 0,
     fatigue: 0,
@@ -167,51 +168,101 @@ function updateDerivedStats() {
     document.getElementById('toughness').textContent = toughness;
 }
 
-// Add Item (Edge, Hindrance, Power)
+// Add edge or hindrance
 function addItem(type) {
-    let input, list;
-    if (type === 'edges') {
-        input = document.getElementById('newEdge');
-        list = document.getElementById('edgesList');
-    } else if (type === 'hindrances') {
-        input = document.getElementById('newHindrance');
-        list = document.getElementById('hindrancesList');
-    } else if (type === 'powers') {
-        input = document.getElementById('newPower');
-        list = document.getElementById('powersList');
-    }
-
+    const inputId = type === 'edges' ? 'newEdge' : 'newHindrance';
+    const input = document.getElementById(inputId);
     const value = input.value.trim();
     if (!value) return;
-
     characterData[type].push(value);
-    renderList(type);
+    renderSimpleList(type);
     input.value = '';
     saveCharacter();
 }
 
-// Render List
-function renderList(type) {
-    let list;
-    if (type === 'edges') list = document.getElementById('edgesList');
-    else if (type === 'hindrances') list = document.getElementById('hindrancesList');
-    else if (type === 'powers') list = document.getElementById('powersList');
-
+// Render edges or hindrances list
+function renderSimpleList(type) {
+    const listId = type === 'edges' ? 'edgesList' : 'hindrancesList';
+    const list = document.getElementById(listId);
     list.innerHTML = '';
     characterData[type].forEach((item, index) => {
         const li = document.createElement('li');
         li.innerHTML = `
-                    <span>${item}</span>
-                    <button class="remove-btn" onclick="removeItem('${type}', ${index})">×</button>
-                `;
+            <span>${item}</span>
+            <button class="remove-btn" data-remove-type="${type}" data-remove-index="${index}">×</button>
+        `;
         list.appendChild(li);
     });
 }
 
-// Remove Item
-function removeItem(type, index) {
-    characterData[type].splice(index, 1);
-    renderList(type);
+// Render powers table
+function renderPowersTable() {
+    const tbody = document.getElementById('powersTableBody');
+    tbody.innerHTML = '';
+    characterData.powers.forEach((p, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${p.name}</td>
+            <td>${p.pp}</td>
+            <td>${p.range}</td>
+            <td>${p.duration}</td>
+            <td>${p.effect}</td>
+            <td><button class="remove-btn" data-remove-type="powers" data-remove-index="${index}">×</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Render weapons table
+function renderWeaponsTable() {
+    const tbody = document.getElementById('weaponsTableBody');
+    tbody.innerHTML = '';
+    characterData.weapons.forEach((w, index) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${w.name}</td>
+            <td>${w.range}</td>
+            <td>${w.damage}</td>
+            <td>${w.ap}</td>
+            <td>${w.rof}</td>
+            <td>${w.wt}</td>
+            <td>${w.notes}</td>
+            <td><button class="remove-btn" data-remove-type="weapons" data-remove-index="${index}">×</button></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Add power row
+function addPower() {
+    const name     = document.getElementById('newPowerName').value.trim();
+    const pp       = document.getElementById('newPowerPP').value.trim();
+    const range    = document.getElementById('newPowerRange').value.trim();
+    const duration = document.getElementById('newPowerDuration').value.trim();
+    const effect   = document.getElementById('newPowerEffect').value.trim();
+    if (!name) return;
+    characterData.powers.push({ name, pp, range, duration, effect });
+    renderPowersTable();
+    ['newPowerName','newPowerPP','newPowerRange','newPowerDuration','newPowerEffect']
+        .forEach(id => { document.getElementById(id).value = ''; });
+    saveCharacter();
+}
+
+// Add weapon row
+function addWeapon() {
+    const name   = document.getElementById('newWeaponName').value.trim();
+    const range  = document.getElementById('newWeaponRange').value.trim();
+    const damage = document.getElementById('newWeaponDamage').value.trim();
+    const ap     = document.getElementById('newWeaponAP').value.trim();
+    const rof    = document.getElementById('newWeaponRoF').value.trim();
+    const wt     = document.getElementById('newWeaponWt').value.trim();
+    const notes  = document.getElementById('newWeaponNotes').value.trim();
+    if (!name) return;
+    characterData.weapons.push({ name, range, damage, ap, rof, wt, notes });
+    renderWeaponsTable();
+    ['newWeaponName','newWeaponRange','newWeaponDamage','newWeaponAP',
+     'newWeaponRoF','newWeaponWt','newWeaponNotes']
+        .forEach(id => { document.getElementById(id).value = ''; });
     saveCharacter();
 }
 
@@ -535,7 +586,12 @@ function loadCharacter() {
     characterData = {
         edges: data.edges || [],
         hindrances: data.hindrances || [],
-        powers: data.powers || [],
+        powers: (data.powers || []).map(p =>
+            typeof p === 'string'
+                ? { name: p, pp: '', range: '', duration: '', effect: '' }
+                : p
+        ),
+        weapons: data.weapons || [],
         skills: data.skills || {},
         wounds: data.wounds || 0,
         fatigue: data.fatigue || 0,
@@ -571,9 +627,10 @@ function loadCharacter() {
     });
 
     // Update displays
-    renderList('edges');
-    renderList('hindrances');
-    renderList('powers');
+    renderSimpleList('edges');
+    renderSimpleList('hindrances');
+    renderPowersTable();
+    renderWeaponsTable();
     updateWoundsFatigueDisplay();
     updateBenniesDisplay();
     updateDerivedStats();
@@ -611,6 +668,7 @@ function validateCharacterData(data) {
     if (!Array.isArray(data.edges)) return false;
     if (!Array.isArray(data.hindrances)) return false;
     if (!Array.isArray(data.powers)) return false;
+    if (data.weapons !== undefined && !Array.isArray(data.weapons)) return false;
 
     // Validate skills is an object
     if (typeof data.skills !== 'object' || data.skills === null) return false;
@@ -753,13 +811,36 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 
     // Enter key handlers for add inputs
-    ['newEdge', 'newHindrance', 'newPower'].forEach(id => {
+    ['newEdge', 'newHindrance'].forEach(id => {
         document.getElementById(id).addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 const type = id.replace('new', '').toLowerCase() + 's';
                 addItem(type);
             }
         });
+    });
+    document.getElementById('newPowerEffect').addEventListener('keypress', e => {
+        if (e.key === 'Enter') addPower();
+    });
+    document.getElementById('newWeaponNotes').addEventListener('keypress', e => {
+        if (e.key === 'Enter') addWeapon();
+    });
+
+    // Powers and weapons buttons
+    document.getElementById('addPowerBtn').addEventListener('click', addPower);
+    document.getElementById('addWeaponBtn').addEventListener('click', addWeapon);
+
+    // Delegated remove handler for lists and tables
+    document.querySelector('.container').addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-remove-type]');
+        if (!btn) return;
+        const type = btn.dataset.removeType;
+        const index = parseInt(btn.dataset.removeIndex, 10);
+        characterData[type].splice(index, 1);
+        if (type === 'powers') renderPowersTable();
+        else if (type === 'weapons') renderWeaponsTable();
+        else renderSimpleList(type);
+        saveCharacter();
     });
 
     // Setup trait rollers
@@ -779,16 +860,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         const itemType = element.getAttribute("data-add-item")
         element.addEventListener("click", () => addItem(itemType))
     })
-
-    // Tab switching for Edges/Hindrances
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.hidden = true);
-            btn.classList.add('active');
-            document.getElementById(`tab-${btn.dataset.tab}`).hidden = false;
-        });
-    });
 
     // Export/Import event listeners
     document.getElementById('exportBtn').addEventListener('click', exportCharacter);
