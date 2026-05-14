@@ -6,7 +6,7 @@ JS library.
 All data is stored locally in the browser, and can be exported as
 a JSON file.
 
-# Try It Out
+# Try It Locally
 1. Install Python, if you don't already have it installed.
 2. Clone this repository to your local machine.
 3. Within the cloned folder, run `python3 -m http.server`.
