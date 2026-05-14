@@ -248,10 +248,25 @@ body {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 0.75rem;
-    background: linear-gradient(135deg, rgba(139, 37, 0, 0.12) 0%, rgba(139, 37, 0, 0.06) 100%);
+    background: var(--blood-red);
     border-radius: 4px;
     padding: 0.4rem 0.5rem;
-    border: 2px solid var(--blood-red);
+}
+
+.derived-stats-row .info-field label {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+.derived-stats-row .info-field input,
+.derived-stats-row .rank-display {
+    color: white;
+    background: transparent;
+    border-bottom-color: rgba(255, 255, 255, 0.4);
+}
+
+.derived-stats-row .info-field input:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-bottom-color: white;
 }
 
 .info-field label {
@@ -712,10 +727,15 @@ body {
     color: var(--ink-faded);
 }
 
+.gear-list-header span:last-child {
+    padding-right: 1.75rem;
+}
+
 .gear-list {
     flex: 1;
     min-height: 0;
     overflow-y: auto;
+    padding-right: 0.5rem;
 }
 
 .gear-list::-webkit-scrollbar {
@@ -738,6 +758,10 @@ body {
     gap: 0.5rem;
     padding: 0.2rem 0.1rem;
     border-bottom: 1px dotted var(--gold-dark);
+}
+
+.gear-row .remove-btn {
+    font-size: 1.2rem;
 }
 
 .gear-name-input {
@@ -1085,7 +1109,7 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: var(--ink-faded);
-    padding: 0.4rem 0.5rem;
+    padding: 0.4rem 0.5rem 0.25rem;
     border-bottom: 2px solid var(--gold);
     text-align: left;
     white-space: nowrap;
@@ -1106,6 +1130,19 @@ body {
     margin: 0 auto;
 }
 
+/* Clickable damage cell */
+.damage-rollable {
+    color: var(--blood-red);
+    font-weight: 700;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+}
+
+.damage-rollable:hover {
+    opacity: 0.7;
+    text-decoration: underline dotted;
+}
+
 /* Powers column widths */
 .powers-table th:nth-child(2),
 .powers-table td:nth-child(2) { width: 50px; }
@@ -1116,15 +1153,17 @@ body {
 .powers-table th:nth-child(6),
 .powers-table td:nth-child(6) { width: 30px; }
 
-/* Weapons column widths */
+/* Weapons column widths + alignment */
 .weapons-table th:nth-child(2),
-.weapons-table td:nth-child(2) { width: 70px; }
+.weapons-table td:nth-child(2) { width: 70px; text-align: center; }
+.weapons-table th:nth-child(3),
+.weapons-table td:nth-child(3) { text-align: center; }
 .weapons-table th:nth-child(4),
 .weapons-table td:nth-child(4),
 .weapons-table th:nth-child(5),
 .weapons-table td:nth-child(5),
 .weapons-table th:nth-child(6),
-.weapons-table td:nth-child(6) { width: 45px; }
+.weapons-table td:nth-child(6) { width: 45px; text-align: center; }
 .weapons-table th:nth-child(8),
 .weapons-table td:nth-child(8) { width: 30px; }
 

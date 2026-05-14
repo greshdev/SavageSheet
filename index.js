@@ -268,18 +268,77 @@ function renderWeaponsTable() {
     tbody.innerHTML = '';
     characterData.weapons.forEach((w, index) => {
         const tr = document.createElement('tr');
+        const hasRollable = w.damage && /d\d+/i.test(w.damage);
         tr.innerHTML = `
             <td>${w.name}</td>
             <td>${w.range}</td>
-            <td>${w.damage}</td>
+            <td class="${hasRollable ? 'damage-rollable' : ''}" title="${hasRollable ? 'Click to roll damage' : ''}">${w.damage}</td>
             <td>${w.ap}</td>
             <td>${w.rof}</td>
             <td>${w.wt}</td>
             <td>${w.notes}</td>
             <td><button class="remove-btn" data-remove-type="weapons" data-remove-index="${index}">×</button></td>
         `;
+        if (hasRollable) {
+            tr.querySelector('.damage-rollable').addEventListener('click', () => {
+                rollDamage(w.name || 'Weapon', w.damage);
+            });
+        }
         tbody.appendChild(tr);
     });
+}
+
+// Parse a Savage Worlds damage expression like "2d6+1", "str+d6", "3d8"
+function parseDamageExpression(expr) {
+    const strengthDie = parseInt(document.getElementById('attr-strength').value) || 4;
+    const normalized = expr.toLowerCase().replace(/\bstr\b/g, `d${strengthDie}`);
+
+    const dicePattern = /(\d+)?d(\d+)/g;
+    const dice = [];
+    let match;
+    while ((match = dicePattern.exec(normalized)) !== null) {
+        dice.push({ count: parseInt(match[1]) || 1, sides: parseInt(match[2]) });
+    }
+
+    const modifierStr = normalized.replace(/(\d+)?d\d+/g, '');
+    const modifier = (modifierStr.match(/[+-]\d+/g) || [])
+        .reduce((sum, m) => sum + parseInt(m), 0);
+
+    return { dice, modifier };
+}
+
+async function rollDamage(weaponName, damageExpr) {
+    if (GLOBAL_ROLL_LOCK) return;
+    GLOBAL_ROLL_LOCK = true;
+    diceBox.clear();
+
+    const { dice, modifier } = parseDamageExpression(damageExpr);
+    if (dice.length === 0) { releaseRollLock(); return; }
+
+    const rollPromises = dice.flatMap(({ count, sides }) =>
+        Array(count).fill(null).map(() => rollExplodingDie(sides))
+    );
+    const results = await Promise.all(rollPromises);
+
+    let total = 0;
+    let parts = [];
+    let exploded = false;
+    let dieIndex = 0;
+    for (const { count, sides } of dice) {
+        for (let i = 0; i < count; i++) {
+            const result = results[dieIndex++];
+            total += result.total;
+            parts.push(`d${sides}: ${result.rolls.join('+')}`);
+            if (result.exploded) exploded = true;
+        }
+    }
+
+    total += modifier;
+    let details = parts.join(' | ');
+    if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier}`;
+
+    showRollResult(`${weaponName} Damage`, total, exploded, details);
+    clearDice();
 }
 
 // Add power row
