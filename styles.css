@@ -1149,10 +1149,10 @@ body {
     align-items: center;
     gap: 1rem;
     margin-bottom: 0.75rem;
-    padding: 0.75rem;
-    background: rgba(201, 162, 39, 0.15);
-    border-radius: 4px;
-    border: 1px solid var(--gold);
+    padding: 0.4rem 0.5rem;
+    background: linear-gradient(135deg, rgba(201, 162, 39, 0.1) 0%, rgba(139, 37, 0, 0.1) 100%);
+    border: 1px solid var(--gold-dark);
+    border-radius: 6px;
 }
 
 .power-points-label {
@@ -1160,7 +1160,7 @@ body {
     font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
-    color: var(--ink-faded);
+    color: var(--blood-red);
 }
 
 .power-points-input {
@@ -1170,15 +1170,15 @@ body {
     font-size: 1.2rem;
     font-weight: 700;
     text-align: center;
-    background: var(--parchment);
-    border: 2px solid var(--gold);
-    border-radius: 4px;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid var(--blood-red);
     color: var(--blood-red);
 }
 
 .power-points-input:focus {
     outline: none;
-    border-color: var(--blood-red);
+    background: rgba(255, 255, 255, 0.15);
 }
 
 /* ── GEAR & NOTES TEXTAREAS ───────────────────────────────────── */
