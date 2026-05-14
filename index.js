@@ -26,10 +26,6 @@ const diceBox = new DiceBox("#dice-canvas",{
 
 let GLOBAL_ROLL_LOCK = false;
 
-function takeRollLock() {
-    GLOBAL_ROLL_LOCK = true
-}
-
 function releaseRollLock() {
     GLOBAL_ROLL_LOCK = false
 }
@@ -606,7 +602,7 @@ async function rollShakenRecovery() {
     diceBox.clear();
 
     const die = parseInt(document.getElementById('attr-spirit').value);
-    const penalty = characterData.wounds + characterData.fatigue + (characterData.distracted ? 2 : 0);
+    const penalty = getPenalty();
     const modifier = getRollModifier();
 
     const traitRollPromise = rollExplodingDie(die);
@@ -696,15 +692,10 @@ function spendBenny(bennyElement) {
     }
 }
 
-// Add a benny
-export function addBenny() {
+function addBenny() {
     characterData.bennies++;
     renderBennies();
     saveCharacter();
-}
-
-function updateBenniesDisplay() {
-    renderBennies();
 }
 
 // Roll a single die with exploding
@@ -722,7 +713,6 @@ async function rollExplodingDie(sides, options) {
                 groupId: groupId,
             }, rollOptions
         )
-        console.log(result)
         groupId = result[0].groupId
         currentRoll = result[0].value
         rolls.push(currentRoll);
@@ -740,6 +730,12 @@ function getRollModifier() {
     return parseInt(document.getElementById('rollModifier').value) || 0;
 }
 
+function getPenalty(extra = 0) {
+    return characterData.wounds + characterData.fatigue
+        + (characterData.distracted ? 2 : 0)
+        + extra;
+}
+
 // Roll a trait (attribute or skill) with Wild Die
 async function rollTrait(selectId, traitName) {
     if (GLOBAL_ROLL_LOCK) {
@@ -754,24 +750,19 @@ async function rollTrait(selectId, traitName) {
         return;
     }
 
-    // Calculate wound/fatigue penalty
-    const penalty = characterData.wounds + characterData.fatigue + (characterData.distracted ? 2 : 0);
+    const penalty = getPenalty();
 
-    // Roll trait die
     const traitRollPromise = rollExplodingDie(die);
-    // Roll wild die (d6)
     const wildRollPromise = rollWildDie();
     const traitRoll = await traitRollPromise
     const wildRoll = await wildRollPromise;
 
-    // Take the better of the two
     const modifier = getRollModifier();
     const traitTotal = traitRoll.total - penalty;
     const wildTotal = wildRoll.total - penalty;
     const bestTotal = Math.max(traitTotal, wildTotal) + modifier;
     const usedWild = wildTotal > traitTotal;
 
-    // Build result string
     let details = `d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
     if (penalty > 0) details += ` | -${penalty} penalty${characterData.distracted ? ' (distracted)' : ''}`;
@@ -793,9 +784,7 @@ async function rollSkill(skillName) {
     const select = document.querySelector(`[data-skill="${skillName}"]`);
     const die = parseInt(select.value) || 4; // 4 if unskilled
     const isUnskilled = !select.value || select.value === '0';
-    const penalty = characterData.wounds + characterData.fatigue
-        + (isUnskilled ? 2 : 0)
-        + (characterData.distracted ? 2 : 0);
+    const penalty = getPenalty(isUnskilled ? 2 : 0);
 
     const traitRollPromise = rollExplodingDie(die);
     const wildRollPromise = rollWildDie()
@@ -997,7 +986,7 @@ function loadCharacter() {
     renderWeaponsTable();
     renderGearList();
     updateWoundsFatigueDisplay();
-    updateBenniesDisplay();
+    renderBennies();
     updateDerivedStats();
     updateRank();
 }
@@ -1071,7 +1060,6 @@ function validateCharacterData(data) {
     return true;
 }
 
-// Export character as JSON file
 function exportCharacter() {
     const data = gatherCharacterData();
 
@@ -1089,11 +1077,9 @@ function exportCharacter() {
     a.click();
     URL.revokeObjectURL(url);
 
-    // Show success feedback
     showImportExportFeedback('Character exported successfully!', false);
 }
 
-// Import character from JSON file
 function importCharacter(file) {
     // Validate file type
     if (!file.name.endsWith('.json')) {
@@ -1107,31 +1093,25 @@ function importCharacter(file) {
         return;
     }
 
-    // Read and parse file
     const reader = new FileReader();
     reader.onload = (e) => {
         try {
             const data = JSON.parse(e.target.result);
 
-            // Validate structure
             if (!validateCharacterData(data)) {
                 showImportExportFeedback('Invalid character file format', true);
                 return;
             }
 
             // Confirm overwrite if character exists
-            const hasExisting = localStorage.getItem(LOCALSTORAGE_KEY);
-            if (hasExisting) {
+            if (localStorage.getItem(LOCALSTORAGE_KEY)) {
                 if (!confirm('This will replace your current character. Continue?')) {
                     return;
                 }
             }
 
-            // Save to localStorage and reload
             localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(data));
             loadCharacter();
-
-            // Show success feedback
             showImportExportFeedback('Character imported successfully!', false);
 
         } catch (error) {
@@ -1193,7 +1173,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (e.key === 'Enter') addWeapon();
     });
 
-    // Powers and weapons buttons
     // Gear / Weapons tab switching
     document.querySelectorAll('.gear-tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
