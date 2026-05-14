@@ -27,8 +27,11 @@ body {
 }
 
 .container {
-    min-width: 70%;
     max-width: 100%;
+    @media (min-width: 2000px) {
+        max-width: 70%;
+    }
+    min-width: 70%;
     margin: 0 auto;
     background-color: var(--parchment-light);
     border-radius: 4px;
