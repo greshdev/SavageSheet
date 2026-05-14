@@ -255,7 +255,7 @@ body {
 
 .info-field input,
 .info-field select,
-.roll-controls select {
+.roll-controls select:not(.die-select) {
     width: 100%;
     padding: 0.5rem;
     font-family: 'Crimson Text', serif;
@@ -269,7 +269,7 @@ body {
 
 .info-field input:focus,
 .info-field select:focus,
-.roll-controls select:focus {
+.roll-controls select:not(.die-select):focus {
     outline: none;
     background: rgba(255, 255, 255, 0.6);
     border-bottom-color: var(--blood-red);
@@ -584,22 +584,31 @@ body {
 
 .skill-die {
     appearance: none;
-    width: 3.5rem;
-    padding: 0.25rem;
+    width: 4rem;
+    padding: 0.25rem 1.1rem 0.25rem 0.25rem;
     font-family: 'Cinzel', serif;
     font-size: 0.85rem;
     font-weight: 700;
     text-align: center;
-    background: rgba(255, 255, 255, 0.5);
-    border: 1px solid var(--gold-dark);
-    border-radius: 3px;
-    color: var(--ink);
+    background-color: var(--parchment);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238b2500'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.3rem center;
+    background-size: 0.45rem auto;
+    border: 2px solid var(--blood-red);
+    border-radius: 4px;
+    color: var(--blood-red);
     cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.skill-die:hover {
+    box-shadow: 0 0 0 2px var(--blood-red);
 }
 
 .skill-die:focus {
     outline: none;
-    border-color: var(--blood-red);
+    box-shadow: 0 0 0 2px var(--gold);
 }
 
 .roll-skill-btn {
@@ -970,13 +979,17 @@ body {
 
 .die-select {
     appearance: none;
-    width: 3.75rem;
-    padding: 0.4rem;
+    width: 4.5rem;
+    padding: 0.4rem 1.25rem 0.4rem 0.4rem;
     font-family: 'Cinzel', serif;
     font-size: 1rem;
     font-weight: 700;
     text-align: center;
-    background: var(--parchment);
+    background-color: var(--parchment);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%238b2500'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.35rem center;
+    background-size: 0.5rem auto;
     border: 2px solid var(--blood-red);
     border-radius: 4px;
     color: var(--blood-red);
@@ -985,8 +998,7 @@ body {
 }
 
 .die-select:hover {
-    background: var(--blood-red);
-    color: var(--parchment);
+    box-shadow: 0 0 0 2px var(--blood-red);
 }
 
 .die-select:focus {
