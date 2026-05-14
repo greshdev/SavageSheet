@@ -381,8 +381,11 @@ async function rollDamage(weaponName, damageExpr) {
     }
 
     total += modifier;
+    const rollMod = getRollModifier();
+    total += rollMod;
     let details = parts.join(' | ');
     if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier}`;
+    if (rollMod !== 0) details += ` | ${rollMod > 0 ? '+' : ''}${rollMod} mod`;
 
     showRollResult(`${weaponName} Damage`, total, exploded, details);
     clearDice();
@@ -642,6 +645,10 @@ async function rollWildDie() {
     return await rollExplodingDie(6, { themeColor: diceConfig.wildColor });
 }
 
+function getRollModifier() {
+    return parseInt(document.getElementById('rollModifier').value) || 0;
+}
+
 // Roll a trait (attribute or skill) with Wild Die
 async function rollTrait(selectId, traitName) {
     if (GLOBAL_ROLL_LOCK) {
@@ -667,17 +674,17 @@ async function rollTrait(selectId, traitName) {
     const wildRoll = await wildRollPromise;
 
     // Take the better of the two
+    const modifier = getRollModifier();
     const traitTotal = traitRoll.total - penalty;
     const wildTotal = wildRoll.total - penalty;
-    const bestTotal = Math.max(traitTotal, wildTotal);
+    const bestTotal = Math.max(traitTotal, wildTotal) + modifier;
     const usedWild = wildTotal > traitTotal;
 
     // Build result string
     let details = `d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
-    if (penalty > 0) {
-        details += ` | -${penalty} penalty`;
-    }
+    if (penalty > 0) details += ` | -${penalty} penalty`;
+    if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier} mod`;
 
     const exploded = traitRoll.exploded || wildRoll.exploded;
     showRollResult(traitName, bestTotal, exploded, details, usedWild);
@@ -705,17 +712,17 @@ async function rollSkill(skillName) {
     const traitRoll = await traitRollPromise
     const wildRoll = await wildRollPromise
 
+    const modifier = getRollModifier();
     const traitTotal = traitRoll.total - penalty;
     const wildTotal = wildRoll.total - penalty;
-    const bestTotal = Math.max(traitTotal, wildTotal);
+    const bestTotal = Math.max(traitTotal, wildTotal) + modifier;
     const usedWild = wildTotal > traitTotal;
 
     const unskilledPrefix = isUnskilled ? 'Unskilled ' : ''
     let details = `${unskilledPrefix}d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
-    if (penalty > 0) {
-        details += ` | -${penalty} ${isUnskilled ? 'penalty (unskilled -2 + wounds/fatigue)' : 'penalty'}`;
-    }
+    if (penalty > 0) details += ` | -${penalty} ${isUnskilled ? 'penalty (unskilled -2 + wounds/fatigue)' : 'penalty'}`;
+    if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier} mod`;
 
     const exploded = traitRoll.exploded || wildRoll.exploded;
     const displayName = isUnskilled ? `${skillName} (unskilled)` : skillName;
@@ -762,8 +769,12 @@ async function rollDice() {
     }
     GLOBAL_ROLL_LOCK = true
     const die = parseInt(document.getElementById('quickDie').value);
+    const modifier = getRollModifier();
     const roll = await rollExplodingDie(die);
-    showRollResult(`Quick d${die}`, roll.total, roll.exploded, roll.rolls.join('+'));
+    const total = roll.total + modifier;
+    let details = roll.rolls.join('+');
+    if (modifier !== 0) details += ` ${modifier > 0 ? '+' : ''}${modifier} mod`;
+    showRollResult(`Quick d${die}`, total, roll.exploded, details);
     clearDice()
 }
 

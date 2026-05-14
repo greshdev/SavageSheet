@@ -1568,7 +1568,42 @@ body {
 .roll-controls {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 0.5rem;
+}
+
+.roll-modifier-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+}
+
+.roll-modifier-label {
+    font-family: 'Cinzel', serif;
+    font-size: 0.55rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--gold-dark);
+}
+
+.roll-modifier-input {
+    width: 48px;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid var(--gold-dark);
+    border-radius: 3px;
+    color: var(--parchment);
+    font-family: 'Cinzel', serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 0.3rem 0.2rem;
+}
+
+.roll-modifier-input:focus {
+    outline: none;
+    border-color: var(--gold);
 }
 
 .roll-btn {
