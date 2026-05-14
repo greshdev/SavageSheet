@@ -10,4 +10,4 @@ a JSON file.
 1. Install Python, if you don't already have it installed.
 2. Clone this repository to your local machine.
 3. Within the cloned folder, run `python3 -m http.server`.
-4. Open http://localhost:8000/ in your browser to view the 
+4. Open http://localhost:8000/ in your browser to view the character sheet.
