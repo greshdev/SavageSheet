@@ -1743,9 +1743,15 @@ body {
         grid-template-columns: 1fr;
     }
 
+    .col-charinfo-plus,
     .charinfo-upper {
-        flex-direction: column;
+        display: contents;
     }
+
+    .charinfo-fields           { order: 1; }
+    .col-attributes            { order: 2; }
+    .bennies-panel             { order: 3; }
+    .condition-tracker-unified { order: 4; }
 
     .add-table-row-form {
         flex-direction: column;
@@ -1760,6 +1766,10 @@ body {
 @media (max-width: 768px) {
     .container {
         padding: 1.5rem;
+    }
+
+    body {
+        padding-bottom: 16rem;
     }
 
     .title {
