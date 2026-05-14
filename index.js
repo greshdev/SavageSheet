@@ -793,10 +793,9 @@ async function rollSkill(skillName) {
     const select = document.querySelector(`[data-skill="${skillName}"]`);
     const die = parseInt(select.value) || 4; // 4 if unskilled
     const isUnskilled = !select.value || select.value === '0';
-    const unskillledPenalty = isUnskilled ? 2 : 0;
-
-    // Calculate wound/fatigue penalty
-    const penalty = characterData.wounds + characterData.fatigue + unskillledPenalty;
+    const penalty = characterData.wounds + characterData.fatigue
+        + (isUnskilled ? 2 : 0)
+        + (characterData.distracted ? 2 : 0);
 
     const traitRollPromise = rollExplodingDie(die);
     const wildRollPromise = rollWildDie()
@@ -809,10 +808,11 @@ async function rollSkill(skillName) {
     const bestTotal = Math.max(traitTotal, wildTotal) + modifier;
     const usedWild = wildTotal > traitTotal;
 
-    const unskilledPrefix = isUnskilled ? 'Unskilled ' : ''
+    const penaltyNotes = [isUnskilled && 'unskilled', characterData.distracted && 'distracted'].filter(Boolean);
+    const unskilledPrefix = isUnskilled ? 'Unskilled ' : '';
     let details = `${unskilledPrefix}d${die}: ${traitRoll.rolls.join('+')}=${traitRoll.total}`;
     details += ` | Wild: ${wildRoll.rolls.join('+')}=${wildRoll.total}`;
-    if (penalty > 0) details += ` | -${penalty} ${isUnskilled ? 'penalty (unskilled -2 + wounds/fatigue)' : 'penalty'}`;
+    if (penalty > 0) details += ` | -${penalty} penalty${penaltyNotes.length ? ` (${penaltyNotes.join(', ')})` : ''}`;
     if (modifier !== 0) details += ` | ${modifier > 0 ? '+' : ''}${modifier} mod`;
 
     const exploded = traitRoll.exploded || wildRoll.exploded;
