@@ -835,6 +835,9 @@ function renderRollHistory() {
         `;
         container.appendChild(div);
     });
+
+    const toggleBtn = document.getElementById('rollHistoryToggle');
+    if (toggleBtn) toggleBtn.style.display = total > 0 ? '' : 'none';
 }
 
 // Show roll result in the roller panel
@@ -1248,5 +1251,14 @@ document.addEventListener('DOMContentLoaded', async () => {
             // Reset file input so same file can be imported again
             e.target.value = '';
         }
+    });
+
+    // Roll history toggle
+    document.getElementById('rollHistoryToggle').addEventListener('click', () => {
+        const history = document.getElementById('rollHistory');
+        const btn = document.getElementById('rollHistoryToggle');
+        const collapsed = history.classList.toggle('collapsed');
+        btn.textContent = collapsed ? '▲' : '▼';
+        btn.title = collapsed ? 'Show roll history' : 'Hide roll history';
     });
 });
