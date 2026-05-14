@@ -248,6 +248,17 @@ function initSlots() {
     });
 }
 
+function updateEdgeSlotAvailability() {
+    const advances = parseInt(document.getElementById('advances').value) || 0;
+    document.querySelectorAll('[data-slot-type="edges"]').forEach(input => {
+        const i = parseInt(input.dataset.slotIndex);
+        if (!EDGE_SLOT_LABELS[i]) return; // unlabeled slots always available
+        const locked = advances < (i - 4); // index 5 → requires 1 advance, index 6 → 2, etc.
+        input.closest('.slot-row').classList.toggle('slot-row--locked', locked);
+        input.disabled = locked;
+    });
+}
+
 // Populate slot inputs from characterData
 function renderSlots() {
     document.querySelectorAll('[data-slot-type="hindrances"]').forEach(input => {
@@ -846,6 +857,7 @@ function loadCharacter() {
 
     // Update displays
     renderSlots();
+    updateEdgeSlotAvailability();
     renderPowersTable();
     renderWeaponsTable();
     renderGearList();
@@ -1017,6 +1029,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     initSkills();
     initSlots();
+    updateEdgeSlotAvailability();
     initTrackers();
     loadCharacter();
     initAutoSave();
@@ -1026,6 +1039,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     // Advances field specifically updates rank
     document.getElementById('advances').addEventListener('input', () => {
         updateRank();
+        updateEdgeSlotAvailability();
         saveCharacter();
     });
 

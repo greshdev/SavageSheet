@@ -584,6 +584,22 @@ body {
     flex-shrink: 0;
 }
 
+.slot-row--locked {
+    opacity: 0.35;
+    pointer-events: none;
+    position: relative;
+}
+
+.slot-row--locked::after {
+    content: '🔒';
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.6rem;
+    opacity: 0.6;
+}
+
 .slot-input {
     flex: 1;
     background: transparent;
