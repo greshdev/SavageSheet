@@ -3,13 +3,36 @@ import DiceBox from "https://unpkg.com/@3d-dice/dice-box@1.0.8/dist/dice-box.es.
 
 
 const diceBox = new DiceBox("#dice-canvas",{
-  assetPath: "assets/",
-  origin: "https://unpkg.com/@3d-dice/dice-box@1.0.8/dist/",
-  theme: "default",
-//   themeColor: "#feea03",
-  offscreen: true,
-  scale: 5,
+    assetPath: "assets/",
+    origin: "https://unpkg.com/@3d-dice/dice-box@1.0.8/dist/",
+    theme: "default",
+    //   themeColor: "#feea03",
+    offscreen: true,
+    // Physics
+    gravity: 1,
+    mass: 1,
+    friction: .8,
+    restitution: 0,
+    linearDamping: 0.5,
+    angularDamping: 0.4,
+    spinForce: 6,
+    throwForce: 5,
+    startingHeight: 8,
+    settleTimeout: 5000,
+    // Rendering
+    delay: 10,
+    scale: 5,
 });
+
+let GLOBAL_ROLL_LOCK = false;
+
+function takeRollLock() {
+    GLOBAL_ROLL_LOCK = true
+}
+
+function releaseRollLock() {
+    GLOBAL_ROLL_LOCK = false
+}
 
 // Core Skills Data
 const coreSkills = [
@@ -315,9 +338,17 @@ async function rollExplodingDie(sides, options) {
     let total = 0;
     let rolls = [];
     let currentRoll;
+    let groupId;
 
     do {
-        const result = await diceBox.add({sides: sides}, options)
+        const result = await diceBox.add(
+            {
+                sides: sides, 
+                groupId: groupId,
+            }, options
+        )
+        console.log(result)
+        groupId = result[0].groupId
         currentRoll = result[0].value
         rolls.push(currentRoll);
         total += currentRoll;
@@ -334,6 +365,10 @@ async function rollWildDie() {
 
 // Roll a trait (attribute or skill) with Wild Die
 async function rollTrait(selectId, traitName) {
+    if (GLOBAL_ROLL_LOCK) {
+        return
+    }
+    GLOBAL_ROLL_LOCK = true
     diceBox.clear()
 
     const die = parseInt(document.getElementById(selectId).value);
@@ -372,6 +407,10 @@ async function rollTrait(selectId, traitName) {
 
 // Roll a skill
 async function rollSkill(skillName) {
+    if (GLOBAL_ROLL_LOCK) {
+        return
+    }
+    GLOBAL_ROLL_LOCK = true
     diceBox.clear()
     
     const select = document.querySelector(`[data-skill="${skillName}"]`);
@@ -429,12 +468,20 @@ function showRollResult(name, result, exploded, details = '', usedWild = false) 
     }
 }
 
+
 function clearDice() {
-    setTimeout(() => diceBox.clear(), 1500)
+    setTimeout(() => {
+        diceBox.clear()
+        releaseRollLock()
+    }, 1000)
 }
 
 // Quick roll (simple die roll, no wild die)
 async function rollDice() {
+    if (GLOBAL_ROLL_LOCK) {
+        return
+    }
+    GLOBAL_ROLL_LOCK = true
     const die = parseInt(document.getElementById('quickDie').value);
     const roll = await rollExplodingDie(die);
     showRollResult(`Quick d${die}`, roll.total, roll.exploded, roll.rolls.join('+'));
@@ -533,9 +580,6 @@ function initAutoSave() {
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
     await diceBox.init()
-
-    // let result = await diceBox.roll("1d20")
-    // result = await diceBox.add("1d20")
 
     initSkills();
     initTrackers();
